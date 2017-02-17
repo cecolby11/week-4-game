@@ -1,11 +1,23 @@
+/*character category*/
 .character-button {
   width: 110px;
   height: 90px;
-  border: red thick solid;
+  border: pink thick solid;
   background: orange;
   float:left;
   margin: 5px;
 }
+.user-char {
+ border: green thick solid;
+}
+.enemy {
+  border: blue thick solid;
+}
+.defender {
+  border: red thick solid;
+}
+
+/*page section divs*/
 .your-character {
   border: green thin solid;
   overflow: auto;
@@ -15,6 +27,6 @@
   overflow: auto;
 }
 .defender {
-  border: pink thin solid;
+  border: red thin solid;
   overflow: auto;
 }

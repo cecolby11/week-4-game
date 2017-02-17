@@ -2,8 +2,8 @@
 $(document).ready(function() {
 
 // game begins
-  var gameState = {
-    "userChar": "",
+  var setup = {
+    "userChar": null,
     "enemies": [],
     "defender": []
   };
@@ -13,45 +13,68 @@ $(document).ready(function() {
     "healthPoints": [120,100,150,180],
     "attackPower": [8, 5, 20,25],
     "counterAttackPower": [8,5,20,25],
-    "charBtnArray": []
+    "charBtnArray": [],
+
+    createCharBtn : function() {
+      for(var i = 0; i < this.name.length; i++) {
+        var charBtn = $("<button>");
+        charBtn.addClass("character-button");
+        // add attributes 
+        charBtn.attr("name", this.name[i]);
+        charBtn.attr("healthPoints", this.healthPoints[i]);
+        charBtn.attr("attackPower", this.attackPower[i]);
+        charBtn.attr("counterAttackPower", this.counterAttackPower[i]);
+        this.charBtnArray.push(charBtn); // add to array
+        // add display elements
+        charBtn.text(charBtn.attr("name"));
+        // append child to parent element so it displays
+        $(".your-character").append(charBtn)
+      }
+    }
+
+
   };
-  // var charBtn = $("<button>");
-  // charBtn.addClass("character-button");
-  // $(".your-character").append(charBtn);
-  // console.log("done");
 
-  // for each char in array 
-  for(var i = 0; i < character.name.length; i++) {
-    //create a variable named charButton, create a button item,and add the class character-button
-    var charBtn = $("<button>");
-    charBtn.addClass("character-button");
-    charBtn.attr("name", character.name[i]);
-    charBtn.attr("healthPoints", character.healthPoints[i]);
-    charBtn.attr("attackPower", character.attackPower[i]);
-    charBtn.attr("counterAttackPower", character.counterAttackPower[i]);
-    character.charBtnArray.push(charBtn); // add to array
-    console.log(character.charBtnArray);
+  var gameplay = {
 
-    // TODO: make divs to display name, hp, etc.displaying just name for now. 
-    charBtn.text(charBtn.attr("name"));
+    // player clicks one of 4 character buttons
+    selectCharacter: function() {
+      $(".character-button").on("click", function() {
+        // only set userChar once per game
+        if(setup.userChar===null){
+          //store selected in setup.userChar 
+          setup.userChar = $(this);
+          // add class user-char
+          setup.userChar.addClass("user-char");
+          //call setup enemies
+          gameplay.addEnemies();
+        } else {
+          console.log("character already selected!")
+        }
+      });
+    },
 
-    // append to your-character div 
-    $(".your-character").append(charBtn);
-    ;
-  }
+    // the others in charBtnArray stored in "enemies"
+    addEnemies: function() {
+      for(var i = 0; i < character.charBtnArray.length; i++) {
+        if(!(character.charBtnArray[i].attr("name")===setup.userChar.attr("name"))){
+          setup.enemies.push(character.charBtnArray[i]);
+          // add enemy class 
+          character.charBtnArray[i].addClass("enemy");
+        }
+      }
+    }
 
-// player clicks one of 4 character buttons
-  $(".character-button").on("click", function() {
-    // that becomes "their character"
-    //add it to gamestate.userChar 
-    gameState.userChar = $(this);
-    console.log((gameState.userChar).attr("name"));
-    //remove from char btn array? 
-    // the other 3 buttons move into the "enemies" section 
-    // add them to gameState.enemies
+  };
+
+  //setup 
+  character.createCharBtn();
+  // user interaction 
+  gameplay.selectCharacter();
 
 
-  })
+
+
 
 //player clicks an enemy and they move into the "defender" section 
 
@@ -76,3 +99,7 @@ $(document).ready(function() {
 // any character must be able to win or lose if you pick opponents in correct order 
 
 });
+
+// TODO: 
+
+// make divs to display name, hp, etc.displaying just name for now. 
