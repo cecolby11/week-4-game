@@ -7,13 +7,13 @@
   float:left;
   margin: 5px;
 }
-.user-char {
+.user-char-btn {
  border: green thick solid;
 }
-.enemy {
+.enemy-btn {
   border: blue thick solid;
 }
-.defender {
+.defender-btn {
   border: red thick solid;
 }
 

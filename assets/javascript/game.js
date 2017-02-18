@@ -5,7 +5,7 @@ $(document).ready(function() {
   var setup = {
     "userChar": null,
     "enemies": [],
-    "defender": []
+    "defender": null
   };
 
   var character = {
@@ -32,7 +32,6 @@ $(document).ready(function() {
       }
     }
 
-
   };
 
   var gameplay = {
@@ -45,7 +44,7 @@ $(document).ready(function() {
           //store selected in setup.userChar 
           setup.userChar = $(this);
           // add class user-char
-          setup.userChar.addClass("user-char");
+          setup.userChar.addClass("user-char-btn");
           //call setup enemies
           gameplay.addEnemies();
         } else {
@@ -58,11 +57,30 @@ $(document).ready(function() {
     addEnemies: function() {
       for(var i = 0; i < character.charBtnArray.length; i++) {
         if(!(character.charBtnArray[i].attr("name")===setup.userChar.attr("name"))){
+          //add to enemies array in setup
           setup.enemies.push(character.charBtnArray[i]);
-          // add enemy class 
-          character.charBtnArray[i].addClass("enemy");
+          // add enemy class to charBtns for styling change
+          character.charBtnArray[i].addClass("enemy-btn");
+          // .enemies is new parent DIV, move to new section of page. 
+          $(".enemies").append(character.charBtnArray[i]);
         }
       }
+      this.selectDefender();
+    },
+
+    selectDefender: function() {
+      $(".enemy-btn").on("click", function() {
+        //pick defender one time 
+        if(setup.defender===null){
+          //add to setup.defender 
+          setup.defender = $(this);
+          console.log("defender chosen: " + (setup.defender).attr("name"));
+          //add defender class for styling change
+          setup.defender.addClass("defender-btn");
+          // .defender is new parent DIV, move to new parent/section of page
+          $(".defender").append(setup.defender);
+        }
+      });
     }
 
   };
@@ -71,8 +89,6 @@ $(document).ready(function() {
   character.createCharBtn();
   // user interaction 
   gameplay.selectCharacter();
-
-
 
 
 
@@ -86,7 +102,7 @@ $(document).ready(function() {
 
 // after every attack click, the user's attack power increases by their base attack power 
 
-//opponent 'defeated' and disappars if their hp gets to 0 or less
+//opponent 'defeated' and disappars if their hp gets to 0 or less --> set setup.defender to null so when enemies clicked it will pick a new defender! 
 
 //player can click on a new character and they go from enemies to defender. now attacks are against them. 
 
@@ -103,3 +119,5 @@ $(document).ready(function() {
 // TODO: 
 
 // make divs to display name, hp, etc.displaying just name for now. 
+
+//move buttons  into proper section divs
