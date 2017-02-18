@@ -5,17 +5,29 @@ $(document).ready(function() {
   var setup = {
     "userChar": null,
     "enemies": [],
-    "defender": null
+    "defender": null, 
+
+    showBtn : function(buttonClass) {
+      var attackBtn = $(buttonClass);
+      attackBtn.css("display","block")
+    },
+
+    displayData : function(buttonSelector) {
+      var tempDiv = $("<div>" + buttonSelector.attr("healthPoints") + "</div>");
+      tempDiv.addClass("char-hp");
+      var tempDiv2 = $("<div>" + buttonSelector.attr("name") + "</div>");
+      tempDiv2.addClass("char-name");
+      buttonSelector.append(tempDiv2, tempDiv);
+    }
   };
 
   var character = {
-    "name": ["bob", "joe", "moe", "peter"],
+    "name": ["Rachel", "Phoebe", "Chandler", "Joey"],
     "healthPoints": [120,100,150,180],
-    "attackPower": [8, 5, 20,25],
-    "counterAttackPower": [8,5,20,25],
+    "attackPower": [8, 5, 20, 25],
     "charBtnArray": [],
 
-    createCharBtn : function() {
+    createCharBtns : function() {
       for(var i = 0; i < this.name.length; i++) {
         var charBtn = $("<button>");
         charBtn.addClass("character-button");
@@ -23,15 +35,15 @@ $(document).ready(function() {
         charBtn.attr("name", this.name[i]);
         charBtn.attr("healthPoints", this.healthPoints[i]);
         charBtn.attr("attackPower", this.attackPower[i]);
-        charBtn.attr("counterAttackPower", this.counterAttackPower[i]);
-        this.charBtnArray.push(charBtn); // add to array
-        // add display elements
-        charBtn.text(charBtn.attr("name"));
+        // add to array of buttons
+        this.charBtnArray.push(charBtn); 
+        // add display text 
+        setup.displayData(charBtn);
+        //charBtn.text(charBtn.attr("name"));
         // append child to parent element so it displays
-        $(".your-character").append(charBtn)
+        $(".your-char-div").append(charBtn)
       }
     }
-
   };
 
   var gameplay = {
@@ -62,12 +74,13 @@ $(document).ready(function() {
           // add enemy class to charBtns for styling change
           character.charBtnArray[i].addClass("enemy-btn");
           // .enemies is new parent DIV, move to new section of page. 
-          $(".enemies").append(character.charBtnArray[i]);
+          $(".enemies-div").append(character.charBtnArray[i]);
         }
       }
       this.selectDefender();
     },
 
+    //player clicks an enemy and they move into the "defender" section
     selectDefender: function() {
       $(".enemy-btn").on("click", function() {
         //pick defender one time 
@@ -78,23 +91,61 @@ $(document).ready(function() {
           //add defender class for styling change
           setup.defender.addClass("defender-btn");
           // .defender is new parent DIV, move to new parent/section of page
-          $(".defender").append(setup.defender);
+          $(".defender-div").append(setup.defender);
+          //show attack button, get ready to fight! 
+          setup.showBtn(".attack-button");
+          battle.attackDefender();
+        } else {
+          console.log("defender already selected!")
         }
       });
+    }
+  };
+
+  var battle = {
+    "defName": null,
+    "userHP": null,
+    "defHP": null,
+    "userAttack": null,
+    "defCounter": null,
+
+    updateBattleText: function() {
+      var sentence1 = ("You attacked " + this.defName + " with " + this.userAttack);
+      var sentence2 = (this.defName + " countered with " + this.defCounter);
+      var battleTextDiv = $(".battle-text");
+      battleTextDiv.html(sentence1 + " and " + sentence2);
+    },
+
+    updateHealthPoints: function() {
+      this.userHP = this.userHP - this.defCounter;
+      //update new userChar HP in the stored attribute
+      setup.userChar.attr("healthPoints", this.userHP);
+      //TODO update the HP number in the div on screen
+    },
+
+    attackDefender: function() {
+      //update with the values 
+      this.defName = setup.defender.attr("name");
+      this.userHP = setup.userChar.attr("healthPoints");
+      this.defHP = setup.defender.attr("healthPoints");
+      this.userAttack = setup.userChar.attr("attackPower");
+      this.defCounter = setup.defender.attr("attackPower");
+
+      $(".attack-button").on("click", function() {
+        battle.updateBattleText();
+        battle.updateHealthPoints();
+      });
+
     }
 
   };
 
   //setup 
-  character.createCharBtn();
+  character.createCharBtns();
   // user interaction 
   gameplay.selectCharacter();
 
-
-
-//player clicks an enemy and they move into the "defender" section 
-
-// player can now click the "attack" button 
+ 
 
 // each time they click, their hp are decreased by whatever the opponent's counter attack power is 
 
@@ -119,5 +170,3 @@ $(document).ready(function() {
 // TODO: 
 
 // make divs to display name, hp, etc.displaying just name for now. 
-
-//move buttons  into proper section divs
