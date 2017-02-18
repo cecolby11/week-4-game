@@ -1,4 +1,5 @@
 /*character category*/
+
 .character-button {
   width: 110px;
   height: 90px;
@@ -17,16 +18,34 @@
   border: red thick solid;
 }
 
+/*character button text*/
+
+.char-name {
+  border: purple thin solid;
+}
+.char-hp {
+  border: pink thin solid;
+}
+
 /*page section divs*/
-.your-character {
+.your-char-div {
   border: green thin solid;
   overflow: auto;
 }
-.enemies {
+.enemies-div {
   border: blue thin solid;
   overflow: auto;
 }
-.defender {
+.defender-div {
   border: red thin solid;
   overflow: auto;
+}
+.battle-text {
+  border: pink thick solid;
+}
+
+/* buttons*/
+.game-button {
+  display: none; /*starts hidden*/
+  background: pink;
 }
