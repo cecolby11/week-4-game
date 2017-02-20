@@ -11,11 +11,9 @@ $(document).ready(function() {
       var button = $(buttonClass);
       if (shouldShow===true) {
         button.css("display","block");
-        console.log("revealing button!");
       }
       else {
         button.css("display", "none");
-        console.log("hiding button!");
       }
     },
 
@@ -96,7 +94,7 @@ $(document).ready(function() {
           //call browser enemies
           character.addEnemies();
         } else {
-          console.log("character already selected!")
+          console.log("user character already selected!")
         }
       });
     },
@@ -120,20 +118,26 @@ $(document).ready(function() {
     selectDefender: function() {
       $(".enemy-btn").on("click", function() {
         //pick defender one time 
+        // if(browser.enemies === []) {
+        //   console.log("no enemies left, put code here to end game");
+        // }
         if(browser.defender===null){
           //add to browser.defender 
           browser.defender = $(this);
-          console.log("defender chosen: " + (browser.defender).attr("name"));
+          // remove from enemies array
+          // var index = browser.enemies.indexOf($(this));
+          // browser.enemies.splice(index,1);
           //add defender class for styling change
           browser.defender.addClass("defender-btn");
           // .defender is new parent DIV, move to new parent/section of page
           $(".defender-div").append(browser.defender);
-          //update all the info in vars so we can access easily
+          //update all the character info in vars so we can access the attributes faster in the gameplay (battles)
           character.storeAttributes();
           //show attack button, get ready to fight! 
+          //attack button showing means it's on-click is active, similar to calling a "launch attack fxn here"
           browser.showBtn(".attack-button", true);
           browser.updateBattleText("beginGame");
-          battle.attackDefender();
+          
         } else {
           console.log("defender already selected!")
         }
@@ -155,6 +159,7 @@ $(document).ready(function() {
   var battle = {
 
     updateHealthPoints: function() {
+      console.log("running updatehealthpoints");
       // user hp decreased by whatever the opponent's counter attack power is 
       character.userHP = character.userHP - character.defCounter;
       // each attack click, opponent's hp is decreased by the user's attach power 
@@ -175,16 +180,13 @@ $(document).ready(function() {
     },
 
     attackDefender: function() {
-      $(".attack-button").on("click", function() {
-        browser.updateBattleText("attack");
-        battle.updateHealthPoints();
-        battle.updateUserAttackPower();
-      });
+      // Do not allow to attach the same event twice (since we will be calling this anew with each new defender and don't want to reattach)
+      console.log("empty function loll");
     },
 
     //check if user or defender defeated
     defeatChecker: function() {
-      // user defeat
+      // user defeated
       if(browser.userChar.attr("healthPoints") <= 0){
         console.log("you lose!");
         // show defeat text
@@ -194,7 +196,7 @@ $(document).ready(function() {
         // show 'try again' button which calls some function
         browser.showBtn(".new-game-button", true);
       } 
-      // defender defeat 
+      // defender defeated
       else if(browser.defender.attr("healthPoints") <= 0){
         console.log("defeated defender!")
         // remove defeated defender button element! 
@@ -207,7 +209,6 @@ $(document).ready(function() {
         browser.defender = null;
       }
     }
-
   };
 
   //browser 
@@ -215,6 +216,19 @@ $(document).ready(function() {
   // user interaction 
   character.selectCharacter();
 
+  //event management
+  $(".attack-button").on("click", function() {
+    if(!(browser.defender===null)){
+      browser.updateBattleText("attack");
+      console.log("attack was clicked once");
+      battle.updateHealthPoints();
+      battle.updateUserAttackPower();
+    } else {
+    console.log("houston we have no defender");
+    }
+  });
+
+// TODO: 
 
 //remove defender from enemies array when defeated
 // when enemies array is empty, then game over Win! 
@@ -224,16 +238,13 @@ $(document).ready(function() {
 // game over if users hp gets to 0 or less
 // game over if all opponents are defeated
 
+// attack power for userChar shouldn't reset between opponents, it should stay increased from the previous.
+
+// make divs to display name, hp, etc.displaying just name for now.  
 
 // any character must be able to win or lose if you pick opponents in correct order 
 
-// attack power for userChar shouldn't reset between opponents, it should stay increased from the previous. 
-
 });
-
-// TODO: 
-
-// make divs to display name, hp, etc.displaying just name for now. 
 
 
 // Final housekeeping TODOs: 
@@ -242,3 +253,4 @@ $(document).ready(function() {
 // remove any blank lines at end of file
 // remove console.logs 
 // rewrite comments to be very clear and concise. try Brian's suggestoin of a function block comment for each 
+// heroku repo
