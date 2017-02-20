@@ -125,8 +125,8 @@ $(document).ready(function() {
           //add to browser.defender 
           browser.defender = $(this);
           // remove from enemies array
-          // var index = browser.enemies.indexOf($(this));
-          // browser.enemies.splice(index,1);
+           var index = browser.enemies.indexOf($(this));
+           browser.enemies.splice(index,1);
           //add defender class for styling change
           browser.defender.addClass("defender-btn");
           // .defender is new parent DIV, move to new parent/section of page
@@ -159,7 +159,6 @@ $(document).ready(function() {
   var battle = {
 
     updateHealthPoints: function() {
-      console.log("running updatehealthpoints");
       // user hp decreased by whatever the opponent's counter attack power is 
       character.userHP = character.userHP - character.defCounter;
       // each attack click, opponent's hp is decreased by the user's attach power 
@@ -177,11 +176,6 @@ $(document).ready(function() {
       // after every attack click, the user's attack power increases by their base attack power 
       character.userAttack = parseInt(character.userAttack) + parseInt(character.userAttack);
       //auto updated in attack text next attack
-    },
-
-    attackDefender: function() {
-      // Do not allow to attach the same event twice (since we will be calling this anew with each new defender and don't want to reattach)
-      console.log("empty function loll");
     },
 
     //check if user or defender defeated
@@ -203,10 +197,18 @@ $(document).ready(function() {
         $(".defender-btn").remove();
         //hide attack button so it can't be clicked (character.selectdefender will show attack button again)
         browser.showBtn(".attack-button", false);
-        // show success text (choose a new defender)
-        browser.updateBattleText("winBattle");
-        // set browser.defender = null so character.selectDefender() triggers selection of a new one (using .enemy onclick)
-        browser.defender = null;
+
+        //if enemies array empty, game over WIN! else battle, over continue 
+        if(browser.enemies.length===0){
+          console.log("null enemies! you win!");
+          browser.updateBattleText("winGame");
+          browser.showBtn(".new-game-button", true);
+        } else {
+          // show success text (choose a new defender)
+          browser.updateBattleText("winBattle");
+          // set browser.defender = null so character.selectDefender() triggers selection of a new one (using .enemy onclick)
+          browser.defender = null;
+        }
       }
     }
   };
@@ -220,18 +222,12 @@ $(document).ready(function() {
   $(".attack-button").on("click", function() {
     if(!(browser.defender===null)){
       browser.updateBattleText("attack");
-      console.log("attack was clicked once");
       battle.updateHealthPoints();
       battle.updateUserAttackPower();
-    } else {
-    console.log("houston we have no defender");
     }
   });
 
 // TODO: 
-
-//remove defender from enemies array when defeated
-// when enemies array is empty, then game over Win! 
 
 //Try again button onclick --> newgame function 
     // resets everything 
@@ -243,6 +239,8 @@ $(document).ready(function() {
 // make divs to display name, hp, etc.displaying just name for now.  
 
 // any character must be able to win or lose if you pick opponents in correct order 
+
+//not sure the on click things should be in fxn, work on taking these out of fxns. 
 
 });
 
