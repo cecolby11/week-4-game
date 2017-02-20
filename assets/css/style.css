@@ -44,8 +44,14 @@
   border: pink thick solid;
 }
 
-/* buttons*/
+/* game buttons*/
 .game-button {
   display: none; /*starts hidden*/
   background: pink;
+}
+.attack-button {
+  background: #FF614A;
+}
+.new-game-button {
+  background: purple;
 }
