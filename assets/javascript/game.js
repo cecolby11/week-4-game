@@ -62,6 +62,7 @@ $(document).ready(function() {
       character.defName = null;
       character.userHP = null;
       character.defHP = null;
+      character.userBase = null;
       character.userAttack = null;
       character.defCounter = null;
       // remove and recreate charBtns (fastest) 
@@ -91,6 +92,7 @@ $(document).ready(function() {
     "defName": null,
     "userHP": null,
     "defHP": null,
+    "userBase": null, // base attack power for user
     "userAttack": null,
     "defCounter": null,
 
@@ -180,6 +182,7 @@ $(document).ready(function() {
       this.defName = browser.defender.attr("name");
       this.userHP = browser.userChar.attr("healthPoints");
       this.defHP = browser.defender.attr("healthPoints");
+      this.userBase = browser.userChar.attr("attackPower");
       this.userAttack = browser.userChar.attr("attackPower");
       this.defCounter = browser.defender.attr("attackPower");
     }
@@ -204,7 +207,7 @@ $(document).ready(function() {
 
     updateUserAttackPower: function() {
       // after every attack click, the user's attack power increases by their base attack power 
-      character.userAttack = parseInt(character.userAttack) + parseInt(character.userAttack);
+      character.userAttack = parseInt(character.userAttack) + parseInt(character.userBase);
       //auto updated in attack text next attack
     },
 
@@ -212,7 +215,6 @@ $(document).ready(function() {
     defeatChecker: function() {
       // user defeated
       if(browser.userChar.attr("healthPoints") <= 0){
-        console.log("you lose!");
         // show defeat text
         browser.updateBattleText("loseGame");
         //hide attack button 
@@ -222,7 +224,6 @@ $(document).ready(function() {
       } 
       // defender defeated
       else if(browser.defender.attr("healthPoints") <= 0){
-        console.log("defeated defender!")
         // remove defeated defender button element! 
         $(".defender-btn").remove();
         //hide attack button so it can't be clicked (character.selectdefender will show attack button again)
@@ -230,7 +231,6 @@ $(document).ready(function() {
 
         //if enemies array empty, game over WIN! else battle, over continue 
         if(browser.enemies.length===0){
-          console.log("null enemies! you win!");
           browser.updateBattleText("winGame");
           browser.showBtn(".new-game-button", true);
         } else {
@@ -249,6 +249,7 @@ $(document).ready(function() {
   character.selectCharacter();
 
   //event-management
+
   $(".attack-button").on("click", function() {
     if(!(browser.defender===null)){
       browser.updateBattleText("attack");
@@ -258,15 +259,12 @@ $(document).ready(function() {
   });
 
   $(".new-game-button").on("click", function() {
-    console.log("beginning a new game");
     browser.gameReset();
   });
 
 // TODO: 
 
-// the attack power is doubling, not adding the BASE value. 
-
-// attack power for userChar shouldn't reset between opponents, it should stay increased from the previous.
+// attack power for userChar shouldn't reset between opponents, it should stay increased from the previous. - getting reset because defender set to null, means defender gets chosen with selectDefender, which updates by calling setcharacterattributes which resets the charAttack. 
 
 // make divs to display name, hp, etc.displaying just name for now.  
 
