@@ -38,16 +38,46 @@ $(document).ready(function() {
       if(textType==="attack"){
         var sentence = ("You attacked " + character.defName + " with " + character.userAttack + " and " + character.defName + " countered with " + character.defCounter + ".");
       } else if(textType==="loseGame") {
-        var sentence = "Oh no, you've been defeated! Click 'Play Again' to start a new game.";
+        var sentence = "Oh no, you've been defeated by " + character.defName + "! Click 'Play Again' to start a new game.";
       } else if(textType==="winBattle") {
         var sentence = ("You defeated " + character.defName + "! Choose your next opponent by clicking an enemy.");
       } else if(textType==="beginGame") {
         var sentence = "Preparing to battle opponent. Use the attack button to battle " + character.defName + ".";
       } else if(textType==="winGame") {
         var sentence = "Way to go, you are the ultimate champion! Click 'Play Again' to start a new game";
+      } else if(textType==="chooseCharacter") {
+        var sentence = "Choose your character! Click on a character to select."
+      } else if(textType==="chooseDefender") {
+        var sentence = "Select your first opponent! Click on an enemy to challenge them."
       }
       // update the content in the div with the selected text
       battleTextDiv.html(sentence);
+    }, 
+
+    gameReset: function() {
+      //reset vars
+      this.userChar = null;
+      this.enemies = [];
+      this.defender = null;
+      character.defName = null;
+      character.userHP = null;
+      character.defHP = null;
+      character.userAttack = null;
+      character.defCounter = null;
+      // remove and recreate charBtns (fastest) 
+      for(var i = 0; i < character.charBtnArray.length; i++) {
+        var charBtn = character.charBtnArray[i];
+        charBtn.remove();
+      }
+      // clear array
+      character.charBtnArray = [];
+      character.createCharBtns();
+      // re-add the .character-button event listeners
+      character.selectCharacter();
+      // hide the play again button
+      browser.showBtn(".new-game-button",false);
+      // change to new game text
+      browser.updateBattleText("chooseCharacter");
     }
   };
 
@@ -78,12 +108,13 @@ $(document).ready(function() {
         browser.displayData(charBtn);
         //charBtn.text(charBtn.attr("name"));
         // append child to parent element so it displays
-        $(".your-char-div").append(charBtn)
+        $(".your-char-div").append(charBtn);
       }
     },
 
     // player clicks one of 4 character buttons
     selectCharacter: function() {
+      //putting this in fxn because we need to "re-call" and re-add the event listener in new game when we recreate the char buttons and assign them to the class. 
       $(".character-button").on("click", function() {
         // only set userChar once per game
         if(browser.userChar===null){
@@ -109,6 +140,7 @@ $(document).ready(function() {
           character.charBtnArray[i].addClass("enemy-btn");
           // .enemies is new parent DIV, move to new section of page. 
           $(".enemies-div").append(character.charBtnArray[i]);
+          browser.updateBattleText("chooseDefender");
         }
       }
       this.selectDefender();
@@ -136,12 +168,10 @@ $(document).ready(function() {
           //show attack button, get ready to fight! 
           //attack button showing means it's on-click is active, similar to calling a "launch attack fxn here"
           browser.showBtn(".attack-button", true);
-          browser.updateBattleText("beginGame");
-          
+          browser.updateBattleText("beginGame");   
         } else {
           console.log("defender already selected!")
         }
-
       });
     },
 
@@ -218,7 +248,7 @@ $(document).ready(function() {
   // user interaction 
   character.selectCharacter();
 
-  //event management
+  //event-management
   $(".attack-button").on("click", function() {
     if(!(browser.defender===null)){
       browser.updateBattleText("attack");
@@ -227,12 +257,14 @@ $(document).ready(function() {
     }
   });
 
+  $(".new-game-button").on("click", function() {
+    console.log("beginning a new game");
+    browser.gameReset();
+  });
+
 // TODO: 
 
-//Try again button onclick --> newgame function 
-    // resets everything 
-// game over if users hp gets to 0 or less
-// game over if all opponents are defeated
+// the attack power is doubling, not adding the BASE value. 
 
 // attack power for userChar shouldn't reset between opponents, it should stay increased from the previous.
 
@@ -242,6 +274,8 @@ $(document).ready(function() {
 
 //not sure the on click things should be in fxn, work on taking these out of fxns. 
 
+//what to do if user and defendere both are defeated... who get it? 
+
 });
 
 
@@ -250,5 +284,6 @@ $(document).ready(function() {
 //check for semicolons
 // remove any blank lines at end of file
 // remove console.logs 
+//single quotes instead of double? 
 // rewrite comments to be very clear and concise. try Brian's suggestoin of a function block comment for each 
 // heroku repo
