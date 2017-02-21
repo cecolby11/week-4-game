@@ -7,59 +7,64 @@
 }
 
 /*page styling*/
-body {
+.page {
   background-image: url("../images/textures/brickwall.png");
 }
-.header {
+header {
   margin-bottom: 20px;
+  padding: 0 30px 0 30px;
   background: var(--wall-color);
   color: white;
-  border-bottom: var(--frame-color) 9px solid;
+}
+footer{
+  height: 60px;
+  line-height: 50px;
+  margin-top: 40px;
+  padding: 0;
+  font-size: small;
+  text-align: center;
+  color: white;
+  background: var(--wall-color);
+  border-top: var(--frame-color) 6px solid;
+}
+h3{
+  color: var(--accent-color);
+  letter-spacing: 2px;
 }
 .alert-info{
   background: white;
   color: var(--accent-color);
-  border-radius: 14%;
   padding: 20px;
   font-weight: normal;
-  margin: 0;
+  margin: 5px;
   overflow:auto; /*encompass play again button */
   position: relative; /*position play again button absolutely*/
+  font-family: 'Pangolin', cursive;
+  letter-spacing: 1px;
+  border: none;
 }
 .alert-info h4 {
   line-height: 20px;
   margin: 0 auto; /*remove default margin*/
-}
-
-/*page section divs*/
-.your-char-div {
-  /*styling for character buttons container*/
-}
-.enemies-div {
-  /*styling for enemy buttons container*/
-}
-.defender-div {
-  /*styling for defender button container*/
+  font-size: 18px;
 }
 
 /*character buttons*/
 .character-button {
-  min-width: 180px;
+  min-width: 170px;
   overflow: auto; /*expand height to fit image*/
-  float:left;
-  margin: 10px; 
-  padding: 15px;
+  display: inline;
+  margin: 5px auto 5px 5px;
+  padding: 10px;
   font-size: medium;
-  background: var(--cabinet-color);
+  color: #1C2719;
+  background: #BDFFA4;
   border: none;
 }
 .user-char-btn {
- background: #BDFFA4;
- color: #1C2719;
+ background: var(--wall-color);
+ color: black;
  border: none;
-}
-.user-char-btn .thumbnail{
-  background: var(--#BDFFA4);
 }
 .enemy-btn {
   background: var(--cabinet-color);
@@ -74,16 +79,21 @@ body {
 /*character display/text*/
 .char-name {
   /*styling for character names on buttons*/
+  font-family: 'Roboto Slab', serif;
+  font-weight: 700;
+  padding-bottom: 5px;
 }
 .char-hp {
   /*styling for character HP on buttons*/
-  margin: 4px;
+  font-family: 'Roboto Slab', serif;
+  padding-top: 5px;
 }
 .char-thumbnail {
   height: 160px;
   width: 160px;
   object-fit: cover;
   margin: 0 auto;
+  padding: 5px;
   background: var(--frame-color);
   border: none;
 }
@@ -95,14 +105,14 @@ body {
   background: var(--wall-color);
   font-size: large;
 }
+.attack-button{
+  margin: 10px auto 0 auto; /*center in char-btn container, add top space btwn thumbnail and button*/
+}
 .attack-button:hover,
 .attack-button:active,
 .attack-button:focus {
   color: var(--wall-color);
   background: white;
-}
-.attack-button{
-  margin: 10px auto 0 auto; /*center in char-btn container, add top space btwn thumbnail and button*/
 }
 .new-game-button {
   color: white;
