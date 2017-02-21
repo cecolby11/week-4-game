@@ -1,79 +1,86 @@
 /*color variables*/
 :root {
-  --frame-color: #dab857;
-  --wall-color: #9e75d5;
-  --accent-color: #00bcc4;
-  --cabinet-color: #d9d0b0;
+  --lightest-color: #f5f5f5;
+  --light-color: #cae56e;
+  --brightest-color: #ff533d;
+  --accent-color: #ab987a;
+  --main-color: #0f1626;
 }
 
 /*page styling*/
 .page {
-  background-image: url("../images/textures/brickwall.png");
+  background-image: url("../images/textures/cream_dust_transparent_90.png");
+  width: 90%;
+  margin: 0 auto; 
+  padding-top: 15px;
 }
-header {
-  margin-bottom: 20px;
-  padding: 0 30px 0 30px;
-  background: var(--wall-color);
-  color: white;
+.main-content {
+  max-width: 100%; /*so it doesn't overflow out of 'page' div and everything stays centered*/
+  /*sticky footer*/
+  min-height: calc(100vh - 100px); /*viewport height - footer height - footer margin - footer border... put viewport in html links!*/
 }
 footer{
-  height: 60px;
+  height: 50px;
   line-height: 50px;
   margin-top: 40px;
   padding: 0;
   font-size: small;
   text-align: center;
-  color: white;
-  background: var(--wall-color);
-  border-top: var(--frame-color) 6px solid;
+  color: var(--lightest-color);
+  background: var(--main-color);
+
+}
+h1,h2,h3 {
+  text-shadow: 1px 1px 1px var(--lightest-color);
 }
 h3{
   color: var(--accent-color);
   letter-spacing: 2px;
 }
-.alert-info{
-  background: white;
-  color: var(--accent-color);
-  padding: 20px;
+.jumbotron {
+  background: var(--lightest-color);
+  text-align: center;
+  padding-top: 20px; /*decrease default*/
+  padding-bottom: 20px; /*decrease default*/
+}
+.jumbotron h1 {
+  font-size: 40px;
+  color: var(--main-color);
+}
+.jumbotron p {
   font-weight: normal;
-  margin: 5px;
-  overflow:auto; /*encompass play again button */
-  position: relative; /*position play again button absolutely*/
-  font-family: 'Pangolin', cursive;
+  font-size: 20px;
   letter-spacing: 1px;
-  border: none;
 }
-.alert-info h4 {
-  line-height: 20px;
-  margin: 0 auto; /*remove default margin*/
-  font-size: 18px;
-}
+
 
 /*character buttons*/
 .character-button {
-  min-width: 170px;
   overflow: auto; /*expand height to fit image*/
   display: inline;
   margin: 5px auto 5px 5px;
   padding: 10px;
   font-size: medium;
-  color: #1C2719;
-  background: #BDFFA4;
+  color: var(--main-color);
+  background: var(--accent-color);
   border: none;
 }
 .user-char-btn {
- background: var(--wall-color);
- color: black;
  border: none;
 }
+.user-char-btn .thumbnail {
+  background: var(--light-color);
+}
 .enemy-btn {
-  background: var(--cabinet-color);
-  border: none;
+  background: var(--lightest-color);
+  border: thin var(--accent-color) solid;
 }
 .defender-btn {
-  background: #FF6263;
-  color: #381616;
+  background: var(--accent-color);
   border: none;
+}
+.defender-btn .thumbnail {
+  background: var(--brightest-color);
 }
 
 /*character display/text*/
@@ -94,41 +101,38 @@ h3{
   object-fit: cover;
   margin: 0 auto;
   padding: 5px;
-  background: var(--frame-color);
+  background: var(--lightest-color);
   border: none;
 }
 
 /*game buttons*/
 .hidden-button {
   display: none; /*starts hidden*/
-  color: white;
-  background: var(--wall-color);
-  font-size: large;
 }
-.attack-button{
+.attack-button,
+.attack-button:focus{
   margin: 10px auto 0 auto; /*center in char-btn container, add top space btwn thumbnail and button*/
+  color: var(--lightest-color);
+  background: var(--main-color);
+  border: none;
 }
 .attack-button:hover,
-.attack-button:active,
-.attack-button:focus {
-  color: var(--wall-color);
-  background: white;
+.attack-button:active{
+  background: var(--lightest-color);
+  color: var(--main-color);
 }
 .new-game-button {
-  color: white;
+  color: var(--lightest-color);
   background: var(--accent-color);
-  font-size: larger;
-  line-height: 20px;
-  margin: 13px 26px 13px 0;
-  z-index: 2;
-  position: absolute;
-  right: 0;
-  top: 0;
 }
 .new-game-button:hover,
 .new-game-button:active,
 .new-game-button:focus{
-  background: white;
+  background: var(--lightest-color);
   color: var(--accent-color);
   border: var(--accent-color) 1px solid;
+}
+.glyphicon{
+  padding: 7px 9px 7px 0;
+  line-height: 6px;
 }

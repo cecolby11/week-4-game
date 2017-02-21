@@ -1,5 +1,8 @@
 // wrap in document ready bc jquery
 $(document).ready(function() {
+  // using jquery backstretch plugin :D 
+  $("body").backstretch("assets/images/manhattan_bw.jpg");
+
 
   //vars and functions realted to general browser display/setup 
   var browser = {
@@ -26,7 +29,6 @@ $(document).ready(function() {
       tempDiv2.addClass("char-hp");
       //image div
       var charImgName = buttonSelector.attr("name") + ".jpg";
-      console.log(charImgName);
       var tempDiv3 = $("<img src='assets/images/" + charImgName + "' alt='character thumbnail'>");
       tempDiv3.addClass("thumbnail char-thumbnail");
       buttonSelector.append(tempDiv, tempDiv3, tempDiv2);

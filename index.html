@@ -3,15 +3,17 @@
 <head>
   <title>Friends RPG</title>
   <!-- <link rel="stylesheet" href="assets/css/reset.css"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.ico">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,700|Pangolin" rel="stylesheet">
-
+ 
   <script
   src="https://code.jquery.com/jquery-2.2.4.js"
   integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
   crossorigin="anonymous"></script>
+  <!-- cool jquery plugin for background image behind content -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
   <script type="text/javascript" src="assets/javascript/game.js"></script>
   
 </head>
@@ -20,32 +22,31 @@
 <body>
 <div class="page">
   
-  <!-- header -->
-  <header>
-    <div class="row">
-      <div class="col-md-12">
-        <h2>Who's the funniest friend?</h2>
-      </div>
-    </div>
-  </header>
-  <!-- /.header -->
-
   <!-- main content -->
   <div class="container main-content">
 
-  <!-- row1 -->
-    <div class="row">
-      <div class="col-md-12">
-        <div class="alert alert-info">
-          <h4 class="battle-text" role="alert">Choose your character! Click on a character to select.</h4>
-          <!-- button hidden until end -->
-          <button class="btn btn-default hidden-button new-game-button">Play Again</button>
+    <!-- header jumbotron -->
+    <div class="jumbotron">
+      <!-- row1 -->
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Who's the funniest friend?</h1>
         </div>
       </div>
+      <!-- /.row1 -->
+      <!-- row2 -->
+      <div class="row">
+        <div class="col-md-12">
+          <p class="battle-text">Choose your character! Click on a character to select.</p>
+          <!-- button hidden until end -->
+          <p><button class="btn btn-default btn-lg hidden-button new-game-button"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>Play Again</button></p>
+        </div>
+      </div>
+      <!-- /.row2 -->
     </div>
-    <!-- /.row1 -->
+    <!-- /.header jumbotron -->
 
-    <!-- row2 -->
+    <!-- row1 -->
     <div class="row">
       <div class="col-md-12 col-resize">
         <div class="row">
@@ -60,7 +61,7 @@
             </div>
             <div class="attack-button-div">
               <!-- attack button starts hidden -->
-              <button class="btn btn-default hidden-button attack-button">Make Jokes</button>
+              <button class="btn btn-default btn-lg btn-block hidden-button attack-button"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>Make Jokes</button>
             </div>
           </div>
         </div>
@@ -79,9 +80,9 @@
         </div>
       </div>
     </div>
-    <!-- /.row2 -->
+    <!-- /.row1 -->
 
-    <!-- row3 -->
+    <!-- row2 -->
     <div class="row">
       <div class="col-md-12">
         <div class="row">
@@ -96,7 +97,7 @@
         </div>
       </div>
     </div>
-    <!-- /.row3 -->
+    <!-- /.row2 -->
 
   </div>
   <!-- /.container main content-->
