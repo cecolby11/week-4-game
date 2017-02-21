@@ -22,21 +22,21 @@ $(document).ready(function() {
       var tempDiv = $("<div>" + buttonSelector.attr("name") + "</div>");
       tempDiv.addClass("char-name");
       //health points div
-      var tempDiv2 = $("<div>" + "Hilarity Points: " + buttonSelector.attr("healthPoints") + "</div>");
+      var tempDiv2 = $("<div>" + "Hilarity: " + buttonSelector.attr("healthPoints") + "</div>");
       tempDiv2.addClass("char-hp");
       //image div
       var charImgName = buttonSelector.attr("name") + ".jpg";
       console.log(charImgName);
       var tempDiv3 = $("<img src='assets/images/" + charImgName + "' alt='character thumbnail'>");
       tempDiv3.addClass("thumbnail char-thumbnail");
-      buttonSelector.append(tempDiv, tempDiv2, tempDiv3);
+      buttonSelector.append(tempDiv, tempDiv3, tempDiv2);
     },
 
     updateHPOnScreen: function() {
       var userHP = this.userChar.attr("healthPoints");
       var defHP = this.defender.attr("healthPoints");
-      $(".user-char-btn .char-hp").html("Hilarity Points: " + userHP);
-      $(".defender-btn .char-hp").html("Hilarity Points: " + defHP);
+      $(".user-char-btn .char-hp").html("Hilarity: " + userHP);
+      $(".defender-btn .char-hp").html("Hilarity: " + defHP);
     }, 
 
     updateBattleText: function(textType) {
@@ -45,7 +45,7 @@ $(document).ready(function() {
       if(textType==="attack"){
         var sentence = ("You hit " + character.defName + " with " + character.userAttack + " jokes and " + character.defName + " countered with " + character.defCounter + ".");
       } else if(textType==="loseGame") {
-        var sentence = "Oh no, " + character.defName + " is funnier than you! Click 'Play Again' to start a new game.";
+        var sentence = "Oh no, " + character.defName + " got the most laughs! Click 'Play Again' to start a new game.";
       } else if(textType==="winBattle") {
         var sentence = ("You defeated " + character.defName + "! Choose your next opponent by clicking a FRIEND.");
       } else if(textType==="beginGame") {
@@ -62,6 +62,8 @@ $(document).ready(function() {
     }, 
 
     gameReset: function() {
+      //preserve attack button 
+      $(".attack-button-div").appendTo($(".your-char-div"));
       //reset vars
       this.userChar = null;
       this.enemies = [];
@@ -91,9 +93,9 @@ $(document).ready(function() {
 
   // vars and functions related to character creation/selection 
   var character = {
-    "name": ["Rachel", "Phoebe", "Joey", "Chandler"],
-    "healthPoints": [120,100,150,180],
-    "attackPower": [8, 5, 20, 25],
+    "name": ["Rachel", "Phoebe", "Joey", "Chandler", "Monica", "Ross"],
+    "healthPoints": [120,100,150,180, 80, 110],
+    "attackPower": [8, 5, 20, 25, 15, 10],
     "charBtnArray": [],
 
     "defName": null,
@@ -152,6 +154,8 @@ $(document).ready(function() {
           browser.updateBattleText("chooseDefender");
         }
       }
+      //change page arrangement so opponent fits next to userChar 
+      $(".col-resize").addClass("col-md-6").removeClass("col-md-12");
       this.selectDefender();
     },
 
@@ -273,14 +277,15 @@ $(document).ready(function() {
   });
 
   $(".new-game-button").on("click", function() {
+    console.log($(".attack-button-div"));
     browser.gameReset();
   });
 
 // TODO: 
 
 // any character must be able to win or lose if you pick opponents in correct order 
-
-//footer and stuff at bottom of page (especially after all enemies disappear and its blank)
+//footer and stuff at bottom of page?
+//make Hilarity points easier to read
 
 });
 
