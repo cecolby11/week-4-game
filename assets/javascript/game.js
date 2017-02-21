@@ -10,28 +10,36 @@ $(document).ready(function() {
     "enemies": [],
     "defender": null, 
 
-    showBtn: function(buttonClass, shouldShow) {
-      var button = $(buttonClass);
+    showHidden: function(elementClass, shouldShow) {
+      var element = $(elementClass);
       if (shouldShow===true) {
-        button.css("display","block");
+        element.css("display","block");
       }
       else {
-        button.css("display", "none");
+        element.css("display", "none");
       }
+    },
+
+    columnResize: function(elementClass, originalSize, newSize){
+      var element = $(elementClass);
+      element.addClass(newSize).removeClass(originalSize);
     },
 
     displayData: function(buttonSelector) {
       //name div
-      var tempDiv = $("<div>" + buttonSelector.attr("name") + "</div>");
-      tempDiv.addClass("char-name");
-      //health points div
-      var tempDiv2 = $("<div>" + "Hilarity: " + buttonSelector.attr("healthPoints") + "</div>");
-      tempDiv2.addClass("char-hp");
+      var nameDiv = $("<div>" + buttonSelector.attr("name") + "</div>");
+      nameDiv.addClass("char-name");
+
+      //hp div
+      var hpDiv = $("<div>" + "Hilarity: " + buttonSelector.attr("healthPoints") + "</div>");
+      hpDiv.addClass("char-hp");
+
       //image div
       var charImgName = buttonSelector.attr("name") + ".jpg";
-      var tempDiv3 = $("<img src='assets/images/" + charImgName + "' alt='character thumbnail'>");
-      tempDiv3.addClass("thumbnail char-thumbnail");
-      buttonSelector.append(tempDiv, tempDiv3, tempDiv2);
+      var imgDiv = $("<img src='assets/images/" + charImgName + "' alt='character thumbnail'>");
+      imgDiv.addClass("thumbnail char-thumbnail");
+
+      buttonSelector.append(nameDiv, imgDiv, hpDiv);
     },
 
     updateHPOnScreen: function() {
@@ -64,8 +72,6 @@ $(document).ready(function() {
     }, 
 
     gameReset: function() {
-      //preserve attack button 
-      $(".attack-button-div").appendTo($(".your-char-div"));
       //reset vars
       this.userChar = null;
       this.enemies = [];
@@ -87,7 +93,7 @@ $(document).ready(function() {
       // re-add the .character-button event listeners
       character.selectCharacter();
       // hide the play again button
-      browser.showBtn(".new-game-button",false);
+      browser.showHidden(".new-game-button",false);
       // change to new game text
       browser.updateBattleText("chooseCharacter");
     }
@@ -95,9 +101,9 @@ $(document).ready(function() {
 
   // vars and functions related to character creation/selection 
   var character = {
-    "name": ["Rachel", "Phoebe", "Joey", "Chandler", "Monica", "Ross"],
-    "healthPoints": [120,100,150,180, 80, 110],
-    "attackPower": [8, 5, 20, 25, 15, 10],
+    "name": ["Rachel", "Phoebe", "Joey", "Chandler"],
+    "healthPoints": [120,100,150,180],
+    "attackPower": [8, 5, 20, 25],
     "charBtnArray": [],
 
     "defName": null,
@@ -108,6 +114,10 @@ $(document).ready(function() {
     "defCounter": null,
 
     createCharBtns : function() {
+      //hide enemies/opponent areas/headers until relevant
+      browser.showHidden(".enemies-section", false);
+      browser.showHidden(".defender-section", false);
+
       for(var i = 0; i < this.name.length; i++) {
         var charBtn = $("<button>");
         charBtn.addClass("character-button");
@@ -145,6 +155,9 @@ $(document).ready(function() {
 
     // the others in charBtnArray stored in "enemies"
     addEnemies: function() {
+      //show enemies section! 
+      browser.showHidden(".enemies-section", true);
+
       for(var i = 0; i < character.charBtnArray.length; i++) {
         if(!(character.charBtnArray[i].attr("name")===browser.userChar.attr("name"))){
           //add to enemies array in browser
@@ -157,20 +170,19 @@ $(document).ready(function() {
         }
       }
       //change page arrangement so opponent fits next to userChar 
-      $(".col-resize").addClass("col-md-6").removeClass("col-md-12");
+      browser.columnResize(".user-section","col-md-12","col-md-4");
       this.selectDefender();
     },
 
     //player clicks an enemy and they move into the "defender" section
     selectDefender: function() {
       $(".enemy-btn").on("click", function() {
-        //pick defender one time 
-        // if(browser.enemies === []) {
-        //   console.log("no enemies left, put code here to end game");
-        // }
+        //pick defender one time
         if(browser.defender===null){
-          //add to browser.defender 
+          //add to browser.defender variable
           browser.defender = $(this);
+          //show defender section
+          browser.showHidden(".defender-section", true);
           // remove from enemies array
            var index = browser.enemies.indexOf($(this));
            browser.enemies.splice(index,1);
@@ -182,9 +194,7 @@ $(document).ready(function() {
           character.storeAttributes();
           //show attack button, get ready to fight! 
           //attack button showing means it's on-click is active, similar to calling a "launch attack fxn here"
-          //add attack button div into user-char-btn parent
-          $(".attack-button-div").appendTo($(".user-char-btn"));
-          browser.showBtn(".attack-button", true);
+          browser.showHidden(".attack-button", true);
           browser.updateBattleText("beginGame");  
         } else {
           console.log("defender already selected!")
@@ -238,12 +248,12 @@ $(document).ready(function() {
         // remove defeated defender button element! 
         $(".defender-btn").remove();
         //hide attack button so it can't be clicked (character.selectdefender will show attack button again)
-        browser.showBtn(".attack-button", false);
+        browser.showHidden(".attack-button", false);
 
         //if enemies array empty, game over WIN! else battle, over continue 
         if(browser.enemies.length===0){
           browser.updateBattleText("winGame");
-          browser.showBtn(".new-game-button", true);
+          browser.showHidden(".new-game-button", true);
         } else {
           // show success text (choose a new defender)
           browser.updateBattleText("winBattle");
@@ -256,9 +266,9 @@ $(document).ready(function() {
         // show defeat text
         browser.updateBattleText("loseGame");
         //hide attack button 
-        browser.showBtn(".attack-button", false);
+        browser.showHidden(".attack-button", false);
         // show 'try again' button which calls some function
-        browser.showBtn(".new-game-button", true);
+        browser.showHidden(".new-game-button", true);
       }
     }
   };
@@ -299,4 +309,5 @@ $(document).ready(function() {
 //single quotes instead of double? 
 // rewrite comments to be very clear and concise. try Brian's suggestoin of a function block comment for each 
 // heroku repo
+// put heroku link in readme.md on github
 // replace health points with hilarity points in code, make the jokes stuff clearer in the code language instaed of attack/battle? 

@@ -52,24 +52,62 @@ h3{
   font-size: 20px;
   letter-spacing: 1px;
 }
-
+.thumbnail {
+  margin: 0 auto;
+  border: none;
+  padding: 0;
+  border-radius: 0px;
+}
 
 /*character buttons*/
 .character-button {
-  overflow: auto; /*expand height to fit image*/
+  width: 200px;
+  height: 200px;
   display: inline;
-  margin: 5px auto 5px 5px;
-  padding: 10px;
+  margin: 5px;
   font-size: medium;
   color: var(--main-color);
   background: var(--accent-color);
   border: none;
+  position: relative;
 }
+/*character display/text*/
+.char-name {
+  /*styling for character names on buttons*/
+  font-family: 'Roboto Slab', serif;
+  font-weight: 700;
+  color: var(--light-color);
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  right: 5px;
+}
+.char-hp {
+  /*styling for character HP on buttons*/
+  width: 100%;
+  font-family: 'Roboto Slab', serif;
+  font-weight: 700;
+  padding: 5px 0 5px 0;
+  background: var(--lightest-color);
+  position: absolute;
+  z-index: 2;
+  bottom: 20px;
+  left: 0px;
+  opacity: 0.8;
+}
+.char-thumbnail {
+  height: 100%;
+  width: 100%;
+  object-fit: cover; /*crop and center to fit*/
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+}
+
+/*role-specific character buttons*/
 .user-char-btn {
  border: none;
-}
-.user-char-btn .thumbnail {
-  background: var(--light-color);
 }
 .enemy-btn {
   background: var(--lightest-color);
@@ -79,30 +117,8 @@ h3{
   background: var(--accent-color);
   border: none;
 }
-.defender-btn .thumbnail {
-  background: var(--brightest-color);
-}
-
-/*character display/text*/
-.char-name {
-  /*styling for character names on buttons*/
-  font-family: 'Roboto Slab', serif;
-  font-weight: 700;
-  padding-bottom: 5px;
-}
-.char-hp {
-  /*styling for character HP on buttons*/
-  font-family: 'Roboto Slab', serif;
-  padding-top: 5px;
-}
-.char-thumbnail {
-  height: 160px;
-  width: 160px;
-  object-fit: cover;
-  margin: 0 auto;
-  padding: 5px;
-  background: var(--lightest-color);
-  border: none;
+.user-char-btn .char-hp {
+  background: var(--light-color);
 }
 
 /*game buttons*/
