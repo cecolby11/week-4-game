@@ -13,7 +13,7 @@ $(document).ready(function() {
     showHidden: function(elementClass, shouldShow) {
       var element = $(elementClass);
       if (shouldShow===true) {
-        element.css("display","block");
+        element.css("display","inline");
       }
       else {
         element.css("display", "none");
@@ -25,7 +25,7 @@ $(document).ready(function() {
       element.addClass(newSize).removeClass(originalSize);
     },
 
-    displayData: function(buttonSelector) {
+    displayCharacterData: function(buttonSelector) {
       //name div
       var nameDiv = $("<div>" + buttonSelector.attr("name") + "</div>");
       nameDiv.addClass("char-name");
@@ -71,7 +71,31 @@ $(document).ready(function() {
       battleTextDiv.html(sentence);
     }, 
 
+    updateLayoutBeforeUserCharChoice: function() {
+      //hide enemies/opponent areas/headers until relevant
+      browser.showHidden(".enemies-section", false);
+      browser.showHidden(".defender-section", false);
+    },
+
+    updateLayoutBeforeOpponentChoice: function() {
+      //show enemies section! 
+      browser.showHidden(".defender-section", false);
+      browser.showHidden(".enemies-section", true);
+      //resize columns: user-4, opp-hidden, enemies-8
+      browser.columnResize(".user-section","col-md-12","col-md-4");
+      browser.columnResize(".enemies-section", "col-md-12","col-md-8");
+    },
+    updateLayoutAfterOpponentChoice: function() {
+      //change page arrangement so opponent fits next to userChar 
+      browser.columnResize(".user-section","col-md-12","col-md-4");
+      browser.columnResize(".enemies-section","col-md-8","col-md-12");
+    },
+    gameResetLayout: function() {
+      browser.columnResize(".user-section", "col-md-4","col-md-12");
+    },
+
     gameReset: function() {
+      browser.gameResetLayout();
       //reset vars
       this.userChar = null;
       this.enemies = [];
@@ -114,9 +138,7 @@ $(document).ready(function() {
     "defCounter": null,
 
     createCharBtns : function() {
-      //hide enemies/opponent areas/headers until relevant
-      browser.showHidden(".enemies-section", false);
-      browser.showHidden(".defender-section", false);
+      browser.updateLayoutBeforeUserCharChoice();
 
       for(var i = 0; i < this.name.length; i++) {
         var charBtn = $("<button>");
@@ -128,7 +150,7 @@ $(document).ready(function() {
         // add to array of buttons
         this.charBtnArray.push(charBtn); 
         // add display text 
-        browser.displayData(charBtn);
+        browser.displayCharacterData(charBtn);
         //charBtn.text(charBtn.attr("name"));
         // append child to parent element so it displays
         $(".your-char-div").append(charBtn);
@@ -155,8 +177,7 @@ $(document).ready(function() {
 
     // the others in charBtnArray stored in "enemies"
     addEnemies: function() {
-      //show enemies section! 
-      browser.showHidden(".enemies-section", true);
+      browser.updateLayoutBeforeOpponentChoice();
 
       for(var i = 0; i < character.charBtnArray.length; i++) {
         if(!(character.charBtnArray[i].attr("name")===browser.userChar.attr("name"))){
@@ -169,14 +190,13 @@ $(document).ready(function() {
           browser.updateBattleText("chooseDefender");
         }
       }
-      //change page arrangement so opponent fits next to userChar 
-      browser.columnResize(".user-section","col-md-12","col-md-4");
       this.selectDefender();
     },
 
     //player clicks an enemy and they move into the "defender" section
     selectDefender: function() {
       $(".enemy-btn").on("click", function() {
+        browser.updateLayoutAfterOpponentChoice();
         //pick defender one time
         if(browser.defender===null){
           //add to browser.defender variable
@@ -258,6 +278,7 @@ $(document).ready(function() {
           // show success text (choose a new defender)
           browser.updateBattleText("winBattle");
           // set browser.defender = null so character.selectDefender() triggers selection of a new one (using .enemy onclick) 
+          browser.updateLayoutBeforeOpponentChoice();
           browser.defender = null;
         }
       }

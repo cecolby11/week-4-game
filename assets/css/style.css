@@ -122,9 +122,6 @@ h3{
 }
 
 /*game buttons*/
-.hidden-button {
-  display: none; /*starts hidden*/
-}
 .attack-button,
 .attack-button:focus{
   margin: 10px auto 0 auto; /*center in char-btn container, add top space btwn thumbnail and button*/
@@ -147,6 +144,9 @@ h3{
   background: var(--lightest-color);
   color: var(--accent-color);
   border: var(--accent-color) 1px solid;
+}
+.hidden-button {
+  display: none; /*starts hidden*/
 }
 .glyphicon{
   padding: 7px 9px 7px 0;
