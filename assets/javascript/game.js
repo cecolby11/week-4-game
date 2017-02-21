@@ -57,7 +57,7 @@ $(document).ready(function() {
       } else if(textType==="chooseCharacter") {
         var sentence = "Choose your character! Click on a character to select."
       } else if(textType==="chooseDefender") {
-        var sentence = "Select your first opponent! Click on an enemy to challenge them."
+        var sentence = "Select your first opponent! Click on a friend to challenge them."
       }
       // update the content in the div with the selected text
       battleTextDiv.html(sentence);
@@ -286,8 +286,7 @@ $(document).ready(function() {
 // TODO: 
 
 // any character must be able to win or lose if you pick opponents in correct order 
-//footer and stuff at bottom of page?
-//make Hilarity points easier to read
+//redo the little character cards, they're ugly. in particular, make Hilarity points easier to read and make them resize as window changes. 
 
 });
 
