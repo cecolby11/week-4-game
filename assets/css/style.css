@@ -1,12 +1,10 @@
 /*character category*/
 
 .character-button {
-  width: 110px;
-  height: 90px;
-  border: pink thick solid;
-  background: orange;
+  width: 200px;
+  overflow: auto; /*expand height to fit image*/
   float:left;
-  margin: 5px;
+  margin: 5px; 
 }
 .user-char-btn {
  border: green thick solid;
@@ -26,15 +24,19 @@
 .char-hp {
   border: pink thin solid;
 }
+.char-thumbnail {
+  height: 180px;
+  width: 180px;
+  object-fit: cover;
+  margin: 0 auto;
+}
 
 /*page section divs*/
 .your-char-div {
   border: green thin solid;
-  overflow: auto;
 }
 .enemies-div {
   border: blue thin solid;
-  overflow: auto;
 }
 .defender-div {
   border: red thin solid;

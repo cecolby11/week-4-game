@@ -18,31 +18,38 @@ $(document).ready(function() {
     },
 
     displayData: function(buttonSelector) {
-      var tempDiv = $("<div>" + buttonSelector.attr("healthPoints") + "</div>");
-      tempDiv.addClass("char-hp");
-      var tempDiv2 = $("<div>" + buttonSelector.attr("name") + "</div>");
-      tempDiv2.addClass("char-name");
-      buttonSelector.append(tempDiv2, tempDiv);
+      //name div
+      var tempDiv = $("<div>" + buttonSelector.attr("name") + "</div>");
+      tempDiv.addClass("char-name");
+      //health points div
+      var tempDiv2 = $("<div>" + "Hilarity Points: " + buttonSelector.attr("healthPoints") + "</div>");
+      tempDiv2.addClass("char-hp");
+      //image div
+      var charImgName = buttonSelector.attr("name") + ".jpg";
+      console.log(charImgName);
+      var tempDiv3 = $("<img src='assets/images/" + charImgName + "' alt='character thumbnail'>");
+      tempDiv3.addClass("thumbnail char-thumbnail");
+      buttonSelector.append(tempDiv, tempDiv2, tempDiv3);
     },
 
     updateHPOnScreen: function() {
       var userHP = this.userChar.attr("healthPoints");
       var defHP = this.defender.attr("healthPoints");
-      $(".user-char-btn .char-hp").html(userHP);
-      $(".defender-btn .char-hp").html(defHP);
+      $(".user-char-btn .char-hp").html("Hilarity Points: " + userHP);
+      $(".defender-btn .char-hp").html("Hilarity Points: " + defHP);
     }, 
 
     updateBattleText: function(textType) {
       var battleTextDiv = $(".battle-text");
       //choose the corresponding text content
       if(textType==="attack"){
-        var sentence = ("You attacked " + character.defName + " with " + character.userAttack + " and " + character.defName + " countered with " + character.defCounter + ".");
+        var sentence = ("You hit " + character.defName + " with " + character.userAttack + " jokes and " + character.defName + " countered with " + character.defCounter + ".");
       } else if(textType==="loseGame") {
-        var sentence = "Oh no, you've been defeated by " + character.defName + "! Click 'Play Again' to start a new game.";
+        var sentence = "Oh no " + character.defName + " is funnier than you! Click 'Play Again' to start a new game.";
       } else if(textType==="winBattle") {
-        var sentence = ("You defeated " + character.defName + "! Choose your next opponent by clicking an enemy.");
+        var sentence = ("You defeated " + character.defName + "! Choose your next opponent by clicking a FRIEND.");
       } else if(textType==="beginGame") {
-        var sentence = "Preparing to battle opponent. Use the attack button to battle " + character.defName + ".";
+        var sentence = "Preparing for a battle of comedy. Use the 'make jokes' button to battle " + character.defName + ".";
       } else if(textType==="winGame") {
         var sentence = "Way to go, you are the ultimate champion! Click 'Play Again' to start a new game";
       } else if(textType==="chooseCharacter") {
