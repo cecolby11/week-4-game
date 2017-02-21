@@ -3,6 +3,7 @@
 <head>
   <title>Friends RPG</title>
   <!-- <link rel="stylesheet" href="assets/css/reset.css"> -->
+  <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.ico">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
   <script
@@ -20,11 +21,8 @@
   <!-- header -->
   <div class="container-fluid header">
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-12">
         <h2>Who is the funniest friend?</h2>
-      </div>
-      <div class="col-md-4">
-        <button class="btn btn-default hidden-button new-game-button">Play Again</button>
       </div>
     </div>
   </div>
@@ -35,7 +33,11 @@
   <!-- row1 -->
     <div class="row">
       <div class="col-md-12">
-          <h4 class="alert alert-info battle-text" role="alert">Choose your character! Click on a character to select.</h4>
+        <div class="alert alert-info" style="border: blue thin solid;">
+          <h4 class="battle-text" role="alert">Choose your character! Click on a character to select.</h4>
+          <!-- button hidden until end -->
+          <button class="btn btn-default hidden-button new-game-button">Play Again</button>
+        </div>
       </div>
     </div>
     <!-- /.row1 -->
@@ -48,9 +50,15 @@
             <h3>Your Character</h3>
           </div>
         </div>
-        <div class="row your-char-div">
+        <div class="row">
           <div class="col-md-12">
-            <!-- Characters will go here -->
+            <div class="your-char-div">
+              <!-- Characters will go here -->
+            </div>
+            <div class="attack-button-div">
+              <!-- attack button starts hidden -->
+              <button class="btn btn-default hidden-button attack-button">Make Jokes</button>
+            </div>
           </div>
         </div>
       </div>
@@ -61,11 +69,9 @@
             <h3>Opponent</h3>
           </div>
         </div>
-        <div class="row defender-div">
-          <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-12 defender-div">
             <!-- Defender will go here -->
-            <!-- attack button starts hidden -->
-            <button class="btn btn-default hidden-button attack-button">Make Jokes</button>
           </div>
         </div>
       </div>
@@ -80,8 +86,8 @@
             <h3>FRIENDS Left To Challenge</h3>
           </div>
         </div>
-        <div class="row enemies-div">
-          <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-12 enemies-div">
             <!-- Enemies will go here -->
           </div>
         </div>
@@ -97,17 +103,6 @@
 
   </div>
   <!-- /.container -->
-
-
-
-
-
-
-<!-- TODO -->
-<!-- add some rows and columns (bootstrap)? -->
-
-<!-- each button has a name, picture, and hp display  -->
-
 
 </div> 
 <!-- /.page -->

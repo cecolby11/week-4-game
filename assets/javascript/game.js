@@ -45,13 +45,13 @@ $(document).ready(function() {
       if(textType==="attack"){
         var sentence = ("You hit " + character.defName + " with " + character.userAttack + " jokes and " + character.defName + " countered with " + character.defCounter + ".");
       } else if(textType==="loseGame") {
-        var sentence = "Oh no " + character.defName + " is funnier than you! Click 'Play Again' to start a new game.";
+        var sentence = "Oh no, " + character.defName + " is funnier than you! Click 'Play Again' to start a new game.";
       } else if(textType==="winBattle") {
         var sentence = ("You defeated " + character.defName + "! Choose your next opponent by clicking a FRIEND.");
       } else if(textType==="beginGame") {
-        var sentence = "Preparing for a battle of laughs. Use the 'make jokes' button to battle " + character.defName + ".";
+        var sentence = "Preparing for a battle of laughs. Use the 'Make Jokes' button to battle " + character.defName + ".";
       } else if(textType==="winGame") {
-        var sentence = "Way to go, you are the ultimate champion! Click 'Play Again' to start a new game";
+        var sentence = "Way to go champ, could you BE any funnier? Click 'Play Again' to start a new game";
       } else if(textType==="chooseCharacter") {
         var sentence = "Choose your character! Click on a character to select."
       } else if(textType==="chooseDefender") {
@@ -176,8 +176,10 @@ $(document).ready(function() {
           character.storeAttributes();
           //show attack button, get ready to fight! 
           //attack button showing means it's on-click is active, similar to calling a "launch attack fxn here"
+          //add attack button div into user-char-btn parent
+          $(".attack-button-div").appendTo($(".user-char-btn"));
           browser.showBtn(".attack-button", true);
-          browser.updateBattleText("beginGame");   
+          browser.updateBattleText("beginGame");  
         } else {
           console.log("defender already selected!")
         }
@@ -244,7 +246,7 @@ $(document).ready(function() {
         }
       }
       // user defeated
-      else if(browser.userChar.attr("healthPoints") <= 0){
+      if(browser.userChar.attr("healthPoints") <= 0){
         // show defeat text
         browser.updateBattleText("loseGame");
         //hide attack button 
@@ -276,9 +278,9 @@ $(document).ready(function() {
 
 // TODO: 
 
-// make divs to display name, hp, etc.displaying just name for now.  
-
 // any character must be able to win or lose if you pick opponents in correct order 
+
+//footer and stuff at bottom of page (especially after all enemies disappear and its blank)
 
 });
 
@@ -291,3 +293,4 @@ $(document).ready(function() {
 //single quotes instead of double? 
 // rewrite comments to be very clear and concise. try Brian's suggestoin of a function block comment for each 
 // heroku repo
+// replace health points with hilarity points in code, make the jokes stuff clearer in the code language instaed of attack/battle? 

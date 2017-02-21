@@ -1,3 +1,4 @@
+/*color variables*/
 :root {
   --frame-color: #dab857;
   --wall-color: #9e75d5;
@@ -5,7 +6,8 @@
   --cabinet-color: #d9d0b0;
 }
 
-.page {
+/*page styling*/
+body {
   background-image: url("../images/textures/brickwall.png");
 }
 .header {
@@ -24,7 +26,6 @@
 }
 
 /*page section divs*/
-
 .your-char-div {
   /*styling for character buttons container*/
 }
@@ -36,7 +37,6 @@
 }
 
 /*character buttons*/
-
 .character-button {
   min-width: 180px;
   overflow: auto; /*expand height to fit image*/
@@ -65,8 +65,7 @@
   border: none;
 }
 
-/*character button display/text*/
-
+/*character display/text*/
 .char-name {
   /*styling for character names on buttons*/
 }
@@ -84,14 +83,25 @@
 }
 
 /*game buttons*/
-
 .hidden-button {
   display: none; /*starts hidden*/
+  color: white;
+  background: var(--wall-color);
+  font-size: large;
 }
-.attack-button {
+.hidden-button:hover,
+.hidden-button:active,
+.hidden-button:focus {
+  color: var(--wall-color);
   background: white;
+}
+.attack-button{
+  margin: 10px auto 0 auto; /*center in char-btn container, add top space btwn thumbnail and button*/
 }
 .new-game-button {
-  background: white;
+  font-size: x-large;
+  margin: 10px;
   float:right;
+  box-shadow: 0 0 3px var(--accent-color);
+  z-index: 2;
 }
