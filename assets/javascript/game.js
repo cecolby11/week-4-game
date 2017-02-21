@@ -180,11 +180,16 @@ $(document).ready(function() {
     storeAttributes: function() {
       //make some vars to keep things easy to access
       this.defName = browser.defender.attr("name");
-      this.userHP = browser.userChar.attr("healthPoints");
       this.defHP = browser.defender.attr("healthPoints");
-      this.userBase = browser.userChar.attr("attackPower");
-      this.userAttack = browser.userChar.attr("attackPower");
       this.defCounter = browser.defender.attr("attackPower");
+      // if vars aren't starting out at null, then user has already defeated at least one defender, so don't update the user vars. 
+      if(this.userAttack===null){
+        //update the uservars bc beginning of game
+        console.log("gamestart, storing user attributes");
+        this.userHP = browser.userChar.attr("healthPoints");
+        this.userAttack = browser.userChar.attr("attackPower");
+        this.userBase = browser.userChar.attr("attackPower");
+      }
     }
   };
 
@@ -213,17 +218,8 @@ $(document).ready(function() {
 
     //check if user or defender defeated
     defeatChecker: function() {
-      // user defeated
-      if(browser.userChar.attr("healthPoints") <= 0){
-        // show defeat text
-        browser.updateBattleText("loseGame");
-        //hide attack button 
-        browser.showBtn(".attack-button", false);
-        // show 'try again' button which calls some function
-        browser.showBtn(".new-game-button", true);
-      } 
-      // defender defeated
-      else if(browser.defender.attr("healthPoints") <= 0){
+      // check defender defeated first
+      if(browser.defender.attr("healthPoints") <= 0){
         // remove defeated defender button element! 
         $(".defender-btn").remove();
         //hide attack button so it can't be clicked (character.selectdefender will show attack button again)
@@ -236,9 +232,18 @@ $(document).ready(function() {
         } else {
           // show success text (choose a new defender)
           browser.updateBattleText("winBattle");
-          // set browser.defender = null so character.selectDefender() triggers selection of a new one (using .enemy onclick)
+          // set browser.defender = null so character.selectDefender() triggers selection of a new one (using .enemy onclick) 
           browser.defender = null;
         }
+      }
+      // user defeated
+      else if(browser.userChar.attr("healthPoints") <= 0){
+        // show defeat text
+        browser.updateBattleText("loseGame");
+        //hide attack button 
+        browser.showBtn(".attack-button", false);
+        // show 'try again' button which calls some function
+        browser.showBtn(".new-game-button", true);
       }
     }
   };
@@ -264,15 +269,9 @@ $(document).ready(function() {
 
 // TODO: 
 
-// attack power for userChar shouldn't reset between opponents, it should stay increased from the previous. - getting reset because defender set to null, means defender gets chosen with selectDefender, which updates by calling setcharacterattributes which resets the charAttack. 
-
 // make divs to display name, hp, etc.displaying just name for now.  
 
 // any character must be able to win or lose if you pick opponents in correct order 
-
-//not sure the on click things should be in fxn, work on taking these out of fxns. 
-
-//what to do if user and defendere both are defeated... who get it? 
 
 });
 
