@@ -49,7 +49,7 @@ $(document).ready(function() {
       } else if(textType==="winBattle") {
         var sentence = ("You defeated " + character.defName + "! Choose your next opponent by clicking a FRIEND.");
       } else if(textType==="beginGame") {
-        var sentence = "Preparing for a battle of comedy. Use the 'make jokes' button to battle " + character.defName + ".";
+        var sentence = "Preparing for a battle of laughs. Use the 'make jokes' button to battle " + character.defName + ".";
       } else if(textType==="winGame") {
         var sentence = "Way to go, you are the ultimate champion! Click 'Play Again' to start a new game";
       } else if(textType==="chooseCharacter") {

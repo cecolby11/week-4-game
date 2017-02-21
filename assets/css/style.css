@@ -1,59 +1,97 @@
-/*character category*/
-
-.character-button {
-  width: 200px;
-  overflow: auto; /*expand height to fit image*/
-  float:left;
-  margin: 5px; 
-}
-.user-char-btn {
- border: green thick solid;
-}
-.enemy-btn {
-  border: black thick solid;
-}
-.defender-btn {
-  border: red thick solid;
+:root {
+  --frame-color: #dab857;
+  --wall-color: #9e75d5;
+  --accent-color: #00bcc4;
+  --cabinet-color: #d9d0b0;
 }
 
-/*character button text*/
-
-.char-name {
-  border: purple thin solid;
+.page {
+  background-image: url("../images/textures/brickwall.png");
 }
-.char-hp {
-  border: pink thin solid;
+.header {
+  margin-bottom: 20px;
+  background: var(--wall-color);
+  color: white;
+  border-bottom: var(--frame-color) 9px solid;
 }
-.char-thumbnail {
-  height: 180px;
-  width: 180px;
-  object-fit: cover;
-  margin: 0 auto;
+.alert-info{
+  background: white;
+  color: var(--accent-color);
+  padding: 15px;
+  border-radius: 14%;
+  font-weight: normal;
+  margin: 0;
 }
 
 /*page section divs*/
+
 .your-char-div {
-  border: green thin solid;
+  /*styling for character buttons container*/
 }
 .enemies-div {
-  border: blue thin solid;
+  /*styling for enemy buttons container*/
 }
 .defender-div {
-  border: red thin solid;
-  overflow: auto;
-}
-.battle-text {
-  border: pink thick solid;
+  /*styling for defender button container*/
 }
 
-/* game buttons*/
-.game-button {
+/*character buttons*/
+
+.character-button {
+  min-width: 180px;
+  overflow: auto; /*expand height to fit image*/
+  float:left;
+  margin: 10px; 
+  padding: 15px;
+  font-size: medium;
+  background: var(--cabinet-color);
+  border: none;
+}
+.user-char-btn {
+ background: #BDFFA4;
+ color: #1C2719;
+ border: none;
+}
+.user-char-btn .thumbnail{
+  background: var(--#BDFFA4);
+}
+.enemy-btn {
+  background: var(--cabinet-color);
+  border: none;
+}
+.defender-btn {
+  background: #FF6263;
+  color: #381616;
+  border: none;
+}
+
+/*character button display/text*/
+
+.char-name {
+  /*styling for character names on buttons*/
+}
+.char-hp {
+  /*styling for character HP on buttons*/
+  margin: 4px;
+}
+.char-thumbnail {
+  height: 160px;
+  width: 160px;
+  object-fit: cover;
+  margin: 0 auto;
+  background: var(--frame-color);
+  border: none;
+}
+
+/*game buttons*/
+
+.hidden-button {
   display: none; /*starts hidden*/
-  background: pink;
 }
 .attack-button {
-  background: #FF614A;
+  background: white;
 }
 .new-game-button {
-  background: purple;
+  background: white;
+  float:right;
 }
