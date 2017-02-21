@@ -19,10 +19,16 @@ body {
 .alert-info{
   background: white;
   color: var(--accent-color);
-  padding: 15px;
   border-radius: 14%;
+  padding: 20px;
   font-weight: normal;
   margin: 0;
+  overflow:auto; /*encompass play again button */
+  position: relative; /*position play again button absolutely*/
+}
+.alert-info h4 {
+  line-height: 20px;
+  margin: 0 auto; /*remove default margin*/
 }
 
 /*page section divs*/
@@ -89,9 +95,9 @@ body {
   background: var(--wall-color);
   font-size: large;
 }
-.hidden-button:hover,
-.hidden-button:active,
-.hidden-button:focus {
+.attack-button:hover,
+.attack-button:active,
+.attack-button:focus {
   color: var(--wall-color);
   background: white;
 }
@@ -99,9 +105,20 @@ body {
   margin: 10px auto 0 auto; /*center in char-btn container, add top space btwn thumbnail and button*/
 }
 .new-game-button {
-  font-size: x-large;
-  margin: 10px;
-  float:right;
-  box-shadow: 0 0 3px var(--accent-color);
+  color: white;
+  background: var(--accent-color);
+  font-size: larger;
+  line-height: 20px;
+  margin: 13px 26px 13px 0;
   z-index: 2;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.new-game-button:hover,
+.new-game-button:active,
+.new-game-button:focus{
+  background: white;
+  color: var(--accent-color);
+  border: var(--accent-color) 1px solid;
 }
