@@ -25,6 +25,15 @@ $(document).ready(function() {
       element.addClass(newSize).removeClass(originalSize);
     },
 
+    isZoomedOut: function(elementClass, shouldZoom){
+      if(shouldZoom===true){
+        //zoom in
+        $(elementClass).attr("style", "zoom: 0.5");
+      } else {
+        $(elementClass).attr("style", "zoom: 1.0");
+      }
+    },
+
     displayCharacterData: function(buttonSelector) {
       //name div
       var nameDiv = $("<div>" + buttonSelector.attr("name") + "</div>");
@@ -78,7 +87,7 @@ $(document).ready(function() {
     },
 
     updateLayoutBeforeOpponentChoice: function() {
-      //show enemies section! 
+      //show enemies section, hide opponent section! 
       browser.showHidden(".defender-section", false);
       browser.showHidden(".enemies-section", true);
       //resize columns: user-4, opp-hidden, enemies-8
@@ -86,9 +95,12 @@ $(document).ready(function() {
       browser.columnResize(".enemies-section", "col-md-12","col-md-8");
     },
     updateLayoutAfterOpponentChoice: function() {
-      //change page arrangement so opponent fits next to userChar 
+      //change page arrangement so opponent fits next to userChar
+      // user-4, opp-4, enemies-4 zoomed down
       browser.columnResize(".user-section","col-md-12","col-md-4");
-      browser.columnResize(".enemies-section","col-md-8","col-md-12");
+      browser.columnResize(".enemies-section","col-md-8","col-md-4");
+      browser.isZoomedOut(".enemy-btn",true);
+
     },
     gameResetLayout: function() {
       browser.columnResize(".user-section", "col-md-4","col-md-12");
@@ -126,8 +138,8 @@ $(document).ready(function() {
   // vars and functions related to character creation/selection 
   var character = {
     "name": ["Rachel", "Phoebe", "Joey", "Chandler"],
-    "healthPoints": [120,100,150,180],
-    "attackPower": [8, 5, 20, 25],
+    "healthPoints": [120,100,90,100],
+    "attackPower": [9,7,18,14],
     "charBtnArray": [],
 
     "defName": null,
@@ -196,6 +208,7 @@ $(document).ready(function() {
     //player clicks an enemy and they move into the "defender" section
     selectDefender: function() {
       $(".enemy-btn").on("click", function() {
+        console.log("original layout: " + $(".enemies-section"));
         browser.updateLayoutAfterOpponentChoice();
         //pick defender one time
         if(browser.defender===null){
@@ -203,11 +216,15 @@ $(document).ready(function() {
           browser.defender = $(this);
           //show defender section
           browser.showHidden(".defender-section", true);
-          // remove from enemies array
+          // remove from enemies array 
            var index = browser.enemies.indexOf($(this));
            browser.enemies.splice(index,1);
           //add defender class for styling change
           browser.defender.addClass("defender-btn");
+          browser.defender.removeClass("enemy-btn");
+          // zoom back in once enemy becomes defender
+          browser.isZoomedOut(browser.defender, false);
+         
           // .defender is new parent DIV, move to new parent/section of page
           $(".defender-div").append(browser.defender);
           //update all the character info in vars so we can access the attributes faster in the gameplay (battles)
@@ -263,8 +280,17 @@ $(document).ready(function() {
 
     //check if user or defender defeated
     defeatChecker: function() {
-      // check defender defeated first
-      if(browser.defender.attr("healthPoints") <= 0){
+      // user defeated if health is ever 0 or below. 
+      if(browser.userChar.attr("healthPoints") <= 0){
+        // show defeat text
+        browser.updateBattleText("loseGame");
+        //hide attack button 
+        browser.showHidden(".attack-button", false);
+        // show 'try again' button which calls some function
+        browser.showHidden(".new-game-button", true);
+      }
+      // check defender defeated 
+      else if(browser.defender.attr("healthPoints") <= 0){
         // remove defeated defender button element! 
         $(".defender-btn").remove();
         //hide attack button so it can't be clicked (character.selectdefender will show attack button again)
@@ -278,18 +304,10 @@ $(document).ready(function() {
           // show success text (choose a new defender)
           browser.updateBattleText("winBattle");
           // set browser.defender = null so character.selectDefender() triggers selection of a new one (using .enemy onclick) 
+          browser.isZoomedOut(".enemy-btn", false);
           browser.updateLayoutBeforeOpponentChoice();
           browser.defender = null;
         }
-      }
-      // user defeated
-      if(browser.userChar.attr("healthPoints") <= 0){
-        // show defeat text
-        browser.updateBattleText("loseGame");
-        //hide attack button 
-        browser.showHidden(".attack-button", false);
-        // show 'try again' button which calls some function
-        browser.showHidden(".new-game-button", true);
       }
     }
   };

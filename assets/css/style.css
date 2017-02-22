@@ -86,6 +86,7 @@ h3{
   /*styling for character HP on buttons*/
   width: 100%;
   font-family: 'Roboto Slab', serif;
+  font-size: 18px;
   font-weight: 700;
   padding: 5px 0 5px 0;
   background: var(--lightest-color);
@@ -106,20 +107,16 @@ h3{
 }
 
 /*role-specific character buttons*/
-.user-char-btn {
- border: none;
-}
-.enemy-btn {
-  background: var(--lightest-color);
-  border: thin var(--accent-color) solid;
-}
-.defender-btn {
-  background: var(--accent-color);
-  border: none;
+.defender-btn .char-hp {
+  background: var(--brightest-color);
 }
 .user-char-btn .char-hp {
   background: var(--light-color);
 }
+.enemy-btn .char-hp {
+  background: var(--lightest-color);
+}
+
 
 /*game buttons*/
 .attack-button,
