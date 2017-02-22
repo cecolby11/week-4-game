@@ -67,7 +67,7 @@ $(document).ready(function() {
       // add to parent div
       buttonSelector.append(nameDiv, imgDiv, hpDiv);
     },
-    
+
     updateHPOnScreen: function() {
       var userHP = this.userChar.attr('HP');
       var defHP = this.opponent.attr('HP');
@@ -344,15 +344,13 @@ $(document).ready(function() {
     browser.gameReset();
   });
 
-// TODO: 
-
-// any character must be able to win or lose if you pick opponents in correct order 
-//redo the little character cards, they're ugly.
-
 });
 
+// TODO: 
 
-// Final housekeeping TODOs: 
+// any character must be able to win or lose if you pick opponents in correct order *************
+
+// housekeeping TODOs: 
 
 // remove any blank lines at end of file
 // rewrite comments to be very clear and concise. try Brian's suggestoin of a function block comment for each 
