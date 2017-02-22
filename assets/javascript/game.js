@@ -92,7 +92,7 @@ $(document).ready(function() {
       browser.showHidden(".enemies-section", true);
       //resize columns: user-4, opp-hidden, enemies-8
       browser.columnResize(".user-section","col-md-12","col-md-4");
-      browser.columnResize(".enemies-section", "col-md-12","col-md-8");
+      browser.columnResize(".enemies-section", "col-md-4","col-md-8");
     },
     updateLayoutAfterOpponentChoice: function() {
       //change page arrangement so opponent fits next to userChar
@@ -208,7 +208,6 @@ $(document).ready(function() {
     //player clicks an enemy and they move into the "defender" section
     selectDefender: function() {
       $(".enemy-btn").on("click", function() {
-        console.log("original layout: " + $(".enemies-section"));
         browser.updateLayoutAfterOpponentChoice();
         //pick defender one time
         if(browser.defender===null){
