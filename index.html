@@ -2,26 +2,30 @@
 <html>
 <head>
   <title>Friends RPG</title>
-  <!-- <link rel="stylesheet" href="assets/css/reset.css"> -->
+  
+  <!-- using viewport for sticky footer calc in css -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.ico">
+  <!-- bootstrap - note: has built in reset -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <!-- custom css -->
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
  
+  <!-- jquery -->
   <script
   src="https://code.jquery.com/jquery-2.2.4.js"
   integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
   crossorigin="anonymous"></script>
-  <!-- cool jquery plugin for background image behind content -->
+  <!-- jquery plugin - for img behind page content -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+  <!-- custom js -->
   <script type="text/javascript" src="assets/javascript/game.js"></script>
   
 </head>
 
-
 <body>
+<!-- page wrapper -->
 <div class="page">
-  
   <!-- main content -->
   <div class="container main-content">
 
@@ -38,7 +42,7 @@
       <div class="row">
         <div class="col-md-12">
           <p class="battle-text">Choose your character! Click on a character to select.</p>
-          <!-- button hidden until end -->
+          <!-- newgame button - hidden until end -->
           <p><button class="btn btn-default btn-lg hidden-button new-game-button"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>Play Again</button></p>
         </div>
       </div>
@@ -46,8 +50,10 @@
     </div>
     <!-- /.header jumbotron -->
 
-    <!-- row1 -->
+    <!-- content row1 -->
     <div class="row text-center">
+
+      <!-- user character -->
       <div class="col-md-12 user-section">
         <div class="row">
           <div class="col-md-12">
@@ -58,30 +64,34 @@
           <div class="col-md-12">
             <div class="row">
               <div class="your-char-div">
-                <!-- Characters will go here -->
+                <!-- Characters will appear here -->
               </div>
             </div>
             <div class="row">
-              <!-- attack button starts hidden -->
+              <!-- attack button - starts hidden -->
               <button class="btn btn-default btn-lg hidden-button attack-button"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>Make Jokes</button>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="col-md-4 defender-section">
+      <!-- /.user character -->
+    
+      <!-- opponent -->
+      <div class="col-md-4 opponent-section">
         <div class="row">
           <div class="col-md-12">
             <h3>Opponent</h3>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-12 defender-div">
-            <!-- Defender will go here -->
+          <div class="col-md-12 opponent-div">
+            <!-- opponent will appear here -->
           </div>
         </div>
       </div>
+      <!-- /.opponent -->
 
+      <!-- enemies -->
       <div class="col-md-12 enemies-section">
         <div class="row">
           <div class="col-md-12">
@@ -90,15 +100,17 @@
         </div>
         <div class="row">
           <div class="col-md-12 enemies-div">
-            <!-- Enemies will go here -->
+            <!-- Enemies will appear here -->
           </div>
         </div>
       </div>
+      <!-- /.enemies -->
+
     </div>
-    <!-- /.row1 -->
+    <!-- /.content row1 -->
 
   </div>
-  <!-- /.container main content-->
+  <!-- /.main content container-->
 
   <footer>
     <div class="row">
@@ -109,6 +121,6 @@
   </footer>
 
 </div> 
-<!-- /.page -->
+<!-- /.page wrapper-->
 </body>
 </html>

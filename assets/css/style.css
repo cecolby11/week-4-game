@@ -1,4 +1,4 @@
-/*color variables*/
+/*color vars*/
 :root {
   --lightest-color: #f5f5f5;
   --light-color: #cae56e;
@@ -7,7 +7,7 @@
   --main-color: #0f1626;
 }
 
-/*page styling*/
+/*general layout*/
 .page {
   background-image: url("../images/textures/cream_dust_transparent_90.png");
   width: 90%;
@@ -37,6 +37,8 @@ h3{
   color: var(--accent-color);
   letter-spacing: 2px;
 }
+
+/*jumbotron style*/
 .jumbotron {
   background: var(--lightest-color);
   text-align: center;
@@ -59,7 +61,7 @@ h3{
   border-radius: 0px;
 }
 
-/*character buttons*/
+/*characters - all*/
 .character-button {
   width: 200px;
   height: 200px;
@@ -71,9 +73,9 @@ h3{
   border: none;
   position: relative;
 }
-/*character display/text*/
+
+/*char-button display-text styling*/
 .char-name {
-  /*styling for character names on buttons*/
   font-family: 'Roboto Slab', serif;
   font-weight: 700;
   color: var(--light-color);
@@ -83,7 +85,6 @@ h3{
   right: 5px;
 }
 .char-hp {
-  /*styling for character HP on buttons*/
   width: 100%;
   font-family: 'Roboto Slab', serif;
   font-size: 18px;
@@ -106,8 +107,8 @@ h3{
   left: 0;
 }
 
-/*role-specific character buttons*/
-.defender-btn .char-hp {
+/*role-specific char-buttons*/
+.opponent-btn .char-hp {
   background: var(--brightest-color);
 }
 .user-char-btn .char-hp {
@@ -117,8 +118,7 @@ h3{
   background: var(--lightest-color);
 }
 
-
-/*game buttons*/
+/*gameplay buttons*/
 .attack-button,
 .attack-button:focus{
   margin: 10px auto 0 auto; /*center in char-btn container, add top space btwn thumbnail and button*/
