@@ -49,9 +49,8 @@ $(document).ready(function() {
     },
 
     /**
-    * Function to display attributes in the char-btns
+    * Function to display attributes (name, HP, and 'name'.jpg img) in the char-btns
     * @param {string} buttonSelector - a jQuery selector (in this application, a button) designated as the parent of the data-display divs created
-    * displays 'name' and 'HP' attributes and the corresponding image in the assets, 'name'.jpg
     */
     displayCharacterData: function(buttonSelector) {
       // create name div
@@ -68,24 +67,31 @@ $(document).ready(function() {
       buttonSelector.append(nameDiv, imgDiv, hpDiv);
     },
 
+    /**
+    * Function to refresh existing HP value displayed on char-btn (for user and defender during battle)
+    */
     updateHPOnScreen: function() {
       var userHP = this.userChar.attr('HP');
-      var defHP = this.opponent.attr('HP');
+      var oppHP = this.opponent.attr('HP');
       $('.user-char-btn .char-hp').html('Hilarity: ' + userHP);
-      $('.opponent-btn .char-hp').html('Hilarity: ' + defHP);
+      $('.opponent-btn .char-hp').html('Hilarity: ' + oppHP);
     }, 
 
+    /**
+    * Function to refresh instruction text displayed on screen (in jumbotron) throughout the game depending on the status of gameplay
+    * @param {string} textType - the scenario the text should correspond to (e.g. winning the game, losing the game, beginning a game)
+    */
     updateBattleText: function(textType) {
       var battleTextDiv = $('.battle-text');
-      //choose the corresponding text content
+      //choose relevant content based on context
       if(textType==='attack'){
-        var sentence = ('You hit ' + character.defName + ' with ' + character.userAttack + ' jokes and ' + character.defName + ' countered with ' + character.defCounter + '.');
+        var sentence = ('You hit ' + character.oppName + ' with ' + character.userAttack + ' jokes and ' + character.oppName + ' countered with ' + character.oppCounter + '.');
       } else if(textType==='loseGame') {
-        var sentence = 'Oh no, ' + character.defName + ' got the most laughs! Click "Play Again" to start a new game.';
+        var sentence = 'Oh no, ' + character.oppName + ' got the most laughs! Click "Play Again" to start a new game.';
       } else if(textType==='winBattle') {
-        var sentence = ('You defeated ' + character.defName + '! Choose your next opponent by clicking a friend.');
+        var sentence = ('You defeated ' + character.oppName + '! Choose your next opponent by clicking a friend.');
       } else if(textType==='beginGame') {
-        var sentence = 'Preparing for a battle of laughs. Use the "Make Jokes" button to battle ' + character.defName + '.';
+        var sentence = 'Preparing for a battle of laughs. Use the "Make Jokes" button to battle ' + character.oppName + '.';
       } else if(textType==='winGame') {
         var sentence = 'Way to go champ, could you BE any funnier? Click "Play Again" to start a new game';
       } else if(textType==='chooseCharacter') {
@@ -93,57 +99,87 @@ $(document).ready(function() {
       } else if(textType==='chooseOpponent') {
         var sentence = 'Select your first opponent! Click on a friend to challenge them.';
       }
-      // update the content in the div with the selected text
+      // update div html 
       battleTextDiv.html(sentence);
     }, 
 
+    /**
+    * Function to update the grid/layout for gameplay before the user picks their character
+    * hides enemies and opponent sections 
+    */
     updateLayoutBeforeUserCharChoice: function() {
-      //hide enemies/opponent areas/headers until relevant
       browser.showHidden('.enemies-section', false);
       browser.showHidden('.opponent-section', false);
     },
 
+    /**
+    * Function to update the grid/layout for gameplay after the user picks their character but before they pick an opponent from the enemies
+    * shows the enemies section for selection
+    * hides the opponent section 
+    * resizes the columns so user and enemies fit nicely side by side: user-section col-md-4, enemies col-md-8
+    * ensures that enemy buttons are at normal scale and not zoomed out as they are during gameplay
+    */
     updateLayoutBeforeOpponentChoice: function() {
-      //show enemies section, hide opponent section! 
       browser.showHidden('.opponent-section', false);
       browser.showHidden('.enemies-section', true);
-      //resize columns: user-4, opp-hidden, enemies-8
       browser.columnResize('.user-section','col-md-12','col-md-4');
       browser.columnResize('.enemies-section', 'col-md-4','col-md-8');
+      browser.isZoomedOut('.enemy-btn', false);
     },
+
+    /**
+    * Function to update the grid/layout for gameplay after the user picks an opponent 
+    * resizes the columns so user, opponent, and enemies fit nicely side by side in that order: user-section col-md-4, opponent col-md-4, enemies col-md-4
+    * scales down the enemies buttons to 50% size using 'zoom' 
+    * ensures opponent section is now showing so opponent can be displayed for battle
+    */
     updateLayoutAfterOpponentChoice: function() {
-      //change page arrangement so opponent fits next to userChar
-      // user-4, opp-4, enemies-4 zoomed down
       browser.columnResize('.user-section','col-md-12','col-md-4');
       browser.columnResize('.enemies-section','col-md-8','col-md-4');
       browser.isZoomedOut('.enemy-btn',true);
-
+      browser.showHidden('.opponent-section', true);
     },
+
+    /**
+    * Function to update the grid/layout for new game
+    * called after a win or loss in the game
+    * resizes the columns so user extends col-md-12 since it now holds all char-btns for display. 
+    */
     gameResetLayout: function() {
       browser.columnResize('.user-section', 'col-md-4','col-md-12');
     },
 
+    /**
+    * This function resets everything for a new game 
+    * resets variables to null or empty
+    * removes and recreates character buttons (cleaner than removing classes, resetting attributes, etc. and leaves potential for adding new characters each level, etc. in the future)
+    * initiates new gameplay by adding event listener to char btns and waiting for user action. 
+    * called after a win or loss in the game
+    */
     gameReset: function() {
+      // reset layout
       browser.gameResetLayout();
-      //reset vars
+      // reset vars
       this.userChar = null;
       this.enemies = [];
       this.opponent = null;
-      character.defName = null;
+      character.oppName = null;
       character.userHP = null;
-      character.defHP = null;
+      character.oppHP = null;
       character.userBase = null;
       character.userAttack = null;
-      character.defCounter = null;
-      // remove and recreate charBtns (fastest) 
+      character.oppCounter = null;
+      // regenerate charBtns 
+      // 1. remove existing 
       for(var i = 0; i < character.charBtnArray.length; i++) {
         var charBtn = character.charBtnArray[i];
         charBtn.remove();
       }
-      // clear array
+      // 2. clear array
       character.charBtnArray = [];
+      // 3. create 
       character.createCharBtns();
-      // re-add the .character-button event listeners
+      // add their event listeners
       character.selectCharacter();
       // hide the play again button
       browser.showHidden('.new-game-button',false);
@@ -152,23 +188,24 @@ $(document).ready(function() {
     }
   };
 
-  // vars and functions related to character creation/selection 
+  /** object for all gameplay vars/fxns related to character creation/selection */
   var character = {
-    'name': ['Rachel', 'Phoebe', 'Joey', 'Chandler'],
-    'HP': [120,100,90,100],
-    'attackPower': [9,7,18,14],
+    // attributes - easily add more characters or attributes by inserting here
+    'name': ['Rachel', 'Phoebe', 'Joey', 'Chandler', 'Monica', 'Ross'],
+    'HP': [215,217,161,140, 160, 190],
+    'attackPower': [8,6,20,23,15,9],
     'charBtnArray': [],
 
-    'defName': null,
+    // vars to hold current user/opponent attributes in memory during battle for faster access 
+    'oppName': null,
     'userHP': null,
-    'defHP': null,
-    'userBase': null, // base attack power for user
-    'userAttack': null,
-    'defCounter': null,
+    'oppHP': null,
+    'userBase': null, // store base user attack power 
+    'userAttack': null, // dynamic user attack power, increases by base each attack 
+    'oppCounter': null, // opponents counter attack power (= their base)
 
     createCharBtns : function() {
       browser.updateLayoutBeforeUserCharChoice();
-
       for(var i = 0; i < this.name.length; i++) {
         var charBtn = $('<button>');
         charBtn.addClass('character-button');
@@ -228,15 +265,14 @@ $(document).ready(function() {
         if(browser.opponent===null){
           //add to browser.opponent variable
           browser.opponent = $(this);
-          //show opponent section
-          browser.showHidden('.opponent-section', true);
+          
           // remove from enemies array 
            var index = browser.enemies.indexOf($(this));
            browser.enemies.splice(index,1);
           //add opponent class for styling change
           browser.opponent.addClass('opponent-btn');
           browser.opponent.removeClass('enemy-btn');
-          // zoom back in once enemy becomes opponent
+          // zoom OPPONENT button back in *after* enemy becomes opponent
           browser.isZoomedOut(browser.opponent, false);
          
           // .opponent is new parent DIV, move to new parent/section of page
@@ -255,9 +291,9 @@ $(document).ready(function() {
 
     storeAttributes: function() {
       //make some vars to keep things easy to access
-      this.defName = browser.opponent.attr('name');
-      this.defHP = browser.opponent.attr('HP');
-      this.defCounter = browser.opponent.attr('attackPower');
+      this.oppName = browser.opponent.attr('name');
+      this.oppHP = browser.opponent.attr('HP');
+      this.oppCounter = browser.opponent.attr('attackPower');
       // if vars aren't starting out at null, then user has already defeated at least one opponent, so don't update the user vars. 
       if(this.userAttack===null){
         //update the uservars bc beginning of game
@@ -273,12 +309,12 @@ $(document).ready(function() {
 
     updateHP: function() {
       // user hp decreased by whatever the opponent's counter attack power is 
-      character.userHP = character.userHP - character.defCounter;
+      character.userHP = character.userHP - character.oppCounter;
       // each attack click, opponent's hp is decreased by the user's attach power 
-      character.defHP = character.defHP - character.userAttack;
+      character.oppHP = character.oppHP - character.userAttack;
       //update new HP in the stored attribute on the button
       browser.userChar.attr('HP', character.userHP);
-      browser.opponent.attr('HP', character.defHP);
+      browser.opponent.attr('HP', character.oppHP);
       //update the HP number in the div on screen
       browser.updateHPOnScreen();
       //see if anyone has been defeated at the new HP levels
@@ -317,7 +353,6 @@ $(document).ready(function() {
           // show success text (choose a new opponent)
           browser.updateBattleText('winBattle');
           // set browser.opponent = null so character.selectOpponent() triggers selection of a new one (using .enemy onclick) 
-          browser.isZoomedOut('.enemy-btn', false);
           browser.updateLayoutBeforeOpponentChoice();
           browser.opponent = null;
         }
@@ -354,5 +389,7 @@ $(document).ready(function() {
 
 // remove any blank lines at end of file
 // rewrite comments to be very clear and concise. try Brian's suggestoin of a function block comment for each 
-// heroku repo
+// heroku push
 // put heroku link in readme.md on github
+// write gameplay instructions? 
+// include jokes? 
