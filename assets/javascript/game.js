@@ -192,8 +192,8 @@ $(document).ready(function() {
   var character = {
     // attributes - easily add more characters or attributes by inserting here
     'name': ['Rachel', 'Phoebe', 'Joey', 'Chandler', 'Monica', 'Ross'],
-    'HP': [215,217,161,140, 160, 190],
-    'attackPower': [8,6,20,23,15,9],
+    'HP': [215,180,161,140, 160, 190],
+    'attackPower': [8,5,20,23,15,9],
     'charBtnArray': [],
 
     // vars to hold current user/opponent attributes in memory during battle for faster access 
@@ -329,17 +329,8 @@ $(document).ready(function() {
 
     //check if user or opponent defeated
     defeatChecker: function() {
-      // user defeated if HP is ever 0 or below. 
-      if(browser.userChar.attr('HP') <= 0){
-        // show defeat text
-        browser.updateBattleText('loseGame');
-        //hide attack button 
-        browser.showHidden('.attack-button', false);
-        // show 'try again' button which calls some function
-        browser.showHidden('.new-game-button', true);
-      }
       // check opponent defeated 
-      else if(browser.opponent.attr('HP') <= 0){
+      if(browser.opponent.attr('HP') <= 0){
         // remove defeated opponent button element! 
         $('.opponent-btn').remove();
         //hide attack button so it can't be clicked (character.selectOpponent will show attack button again)
@@ -356,6 +347,15 @@ $(document).ready(function() {
           browser.updateLayoutBeforeOpponentChoice();
           browser.opponent = null;
         }
+      }
+      // user defeated if HP is ever 0 or below. 
+      else if(browser.userChar.attr('HP') <= 0){
+        // show defeat text
+        browser.updateBattleText('loseGame');
+        //hide attack button 
+        browser.showHidden('.attack-button', false);
+        // show 'try again' button which calls some function
+        browser.showHidden('.new-game-button', true);
       }
     }
   };
