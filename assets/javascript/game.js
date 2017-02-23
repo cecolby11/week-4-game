@@ -349,7 +349,7 @@ $(document).ready(function() {
         }
       }
       // user defeated if HP is ever 0 or below. 
-      else if(browser.userChar.attr('HP') <= 0){
+      if(browser.userChar.attr('HP') <= 0){
         // show defeat text
         browser.updateBattleText('loseGame');
         //hide attack button 
