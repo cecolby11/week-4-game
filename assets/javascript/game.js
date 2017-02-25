@@ -428,10 +428,3 @@ $(document).ready(function() {
   gameState.launchGame();
 
 });
-
-// housekeeping TODOs: 
-
-// remove any blank lines at end of file
-// rewrite comments to be very clear and concise. try Brian's suggestoin of a function block comment for each 
-// heroku push
-// put heroku link in readme.md on github
