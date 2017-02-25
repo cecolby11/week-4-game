@@ -12,6 +12,12 @@ $(document).ready(function() {
     'winGame':false,
     'resetToNewGame':false,
 
+    launchGame: function() {
+      // launch game, collect initial user input
+      browser.createCharBtns();
+      character.selectCharacter();
+    },
+
     /**
     * This function updates gameState bools to reflect phase of user interaction
     * @param {string} phase - one of the vars in the gameState object, to set to 'true' (wrt the user's interaction)
@@ -405,11 +411,6 @@ $(document).ready(function() {
     }
   };
 
-
-  // launch game, get first user input
-  browser.createCharBtns();
-  character.selectCharacter();
-
   // event management
   $('.attack-button').on('click', function() {
     if(!(character.opponent===null)){
@@ -423,6 +424,8 @@ $(document).ready(function() {
   $('.new-game-button').on('click', function() {
     gameState.gameReset();
   });
+
+  gameState.launchGame();
 
 });
 
