@@ -202,7 +202,7 @@ $(document).ready(function() {
     'oppHP': null,
     'userBase': null, // store base user attack power 
     'userAttack': null, // dynamic user attack power, increases by base each attack 
-    'oppCounter': null, // opponents counter attack power (= their base)
+    'oppCounter': null, // opponents counter attack power(= base)
 
     createCharBtns : function() {
       browser.updateLayoutBeforeUserCharChoice();
