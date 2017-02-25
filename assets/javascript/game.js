@@ -6,13 +6,16 @@ $(document).ready(function() {
     'selectCharacter':false,
     'showEnemies':false,
     'opponentSelected':false,
-    'inBattle':false,
     'winBattle':false,
     'loseBattle':false,
     'loseGame':false,
     'winGame':false,
     'resetToNewGame':false,
 
+    /**
+    * This function updates gameState bools to reflect phase of user interaction
+    * @param {string} phase - one of the vars in the gameState object, to set to 'true' (wrt the user's interaction)
+    */
     updateGameState: function(phase) {
       for(var key in gameState) {
         if(typeof gameState[key] === 'boolean'){
@@ -20,26 +23,66 @@ $(document).ready(function() {
         }
       }
       gameState[phase] = true;
-      console.log("update game state to " + phase);
     },
 
     /**
     * This function resets everything for a new game 
-    * resets variables to null or empty
-    * removes and recreates character buttons (cleaner than removing classes, resetting attributes, etc. and leaves potential for adding new characters each level, etc. in the future)
-    * initiates new gameplay by adding event listener to char btns and waiting for user action. 
     * called after a win or loss in the game
     */
     gameReset: function() {
       gameState.updateGameState("resetToNewGame");
       browser.refreshGame();
-      data.resetData();
-      data.resetCharBtns();
+
+      character.resetCharacters();
+      browser.resetCharBtns();
     }
+  };
+
+  var data = {
+    // attributes - easily add more characters or attributes by inserting here
+    'name': ['Rachel', 'Phoebe', 'Joey', 'Chandler', 'Monica', 'Ross'],
+    'HP': [215,180,161,140, 160, 190],
+    'attackPower': [8,5,20,23,15,9],
+    'charBtnArray': []
   };
 
   /** object for all vars/fxns related to browser layout/display */
   var browser = {
+
+    createCharBtns : function() {
+      browser.refreshGame();
+
+      for(var i = 0; i < data.name.length; i++) {
+        var charBtn = $('<button>');
+        charBtn.addClass('character-button');
+        // add attributes 
+        charBtn.attr('name', data.name[i]);
+        charBtn.attr('HP', data.HP[i]);
+        charBtn.attr('attackPower', data.attackPower[i]);
+        // add to array of buttons
+        data.charBtnArray.push(charBtn); 
+        // add display text 
+        browser.displayCharacterData(charBtn);
+        //charBtn.text(charBtn.attr('name'));
+        // append child to parent element so it displays
+        $('.your-char-div').append(charBtn);
+      }
+    },
+
+    resetCharBtns: function() {
+      // 1. remove existing 
+      for(var i = 0; i < data.charBtnArray.length; i++) {
+        var charBtn = data.charBtnArray[i];
+        charBtn.remove();
+      }
+      // 2. clear array
+      data.charBtnArray = [];
+      // 3. create 
+      browser.createCharBtns();
+      // add their event listeners
+      character.selectCharacter();
+    },
+
     /**
     * Function to show/hide an element
     * @param {string} elementClass - a class name to pass into jQuery selector 
@@ -103,8 +146,8 @@ $(document).ready(function() {
     * Function to refresh existing HP value displayed on char-btn (for user and defender during battle)
     */
     updateHPOnScreen: function() {
-      var userHP = data.userChar.attr('HP');
-      var oppHP = data.opponent.attr('HP');
+      var userHP = character.userChar.attr('HP');
+      var oppHP = character.opponent.attr('HP');
       $('.user-char-btn .char-hp').html('Hilarity: ' + userHP);
       $('.opponent-btn .char-hp').html('Hilarity: ' + oppHP);
     }, 
@@ -117,13 +160,13 @@ $(document).ready(function() {
       var battleTextDiv = $('.battle-text');
       //choose relevant content based on context
       if(gameState.inBattle === true){
-        var sentence = ('You hit ' + data.oppName + ' with ' + data.userAttack + ' jokes and ' + data.oppName + ' countered with ' + data.oppCounter + '.');
+        var sentence = ('You hit ' + character.oppName + ' with ' + character.userAttack + ' jokes and ' + character.oppName + ' countered with ' + character.oppCounter + '.');
       } else if(gameState.loseGame === true) {
-        var sentence = 'Oh no, ' + data.oppName + ' got the most laughs! Click "Play Again" to start a new game.';
+        var sentence = 'Oh no, ' + character.oppName + ' got the most laughs! Click "Play Again" to start a new game.';
       } else if(gameState.winBattle === true) {
-        var sentence = ('You defeated ' + data.oppName + '! Choose your next opponent by clicking a friend.');
-      } else if(gameState.resetToNewGame === true) {
-        var sentence = 'Preparing for a battle of laughs. Use the "Make Jokes" button to battle ' + data.oppName + '.';
+        var sentence = ('You defeated ' + character.oppName + '! Choose your next opponent by clicking a friend.');
+      } else if(gameState.opponentSelected === true) {
+        var sentence = 'Preparing for a battle of laughs. Use the "Make Jokes" button to battle ' + character.oppName + '.';
       } else if(gameState.winGame === true) {
         var sentence = 'Way to go champ, could you BE any funnier? Click "Play Again" to start a new game';
       } else if(gameState.selectCharacter === true) {
@@ -139,9 +182,6 @@ $(document).ready(function() {
     * Function to update the grid/layout for game state
     */
     updateLayout: function() {
-      /**
-      * hides enemies and opponent sections 
-      */
       if(gameState.selectCharacter === true){
         browser.showHidden('.enemies-section', false);
         browser.showHidden('.opponent-section', false);
@@ -169,18 +209,16 @@ $(document).ready(function() {
         browser.columnResize('.enemies-section','col-md-8','col-md-4');
         browser.isZoomedOut('.enemy-btn',true);
         browser.showHidden('.opponent-section', true);
-        // zoom OPPONENT button back in *after* enemy becomes opponent
-        browser.isZoomedOut(data.opponent, false);
+        // zoom **OPPONENT** button back in *after* enemy becomes opponent
+        browser.isZoomedOut(character.opponent, false);
         // .opponent is new parent DIV, move to new parent/section of page
-        $('.opponent-div').append(data.opponent);
-        //show attack button, get ready to fight! 
-        //attack button showing means it's on-click is active, similar to calling a 'launch attack fxn here'
+        $('.opponent-div').append(character.opponent);
+        //attack button showing adds its on-click listener
         browser.showHidden('.attack-button', true);
       }
       else if (gameState.winBattle === true) {
-        // remove defeated opponent button element! 
+        // remove defeated opponent 
         $('.opponent-btn').remove();
-        //hide attack button so it can't be clicked (data.selectOpponent will show attack button again)
         browser.showHidden('.attack-button', false);
       }
       else if (gameState.loseGame === true) {
@@ -196,8 +234,6 @@ $(document).ready(function() {
       else if(gameState.resetToNewGame === true){
         browser.columnResize('.user-section', 'col-md-4','col-md-12');
         browser.showHidden('.new-game-button',false);
-        // change to new game text
-        browser.updateBattleText();
       }
     },
 
@@ -207,18 +243,12 @@ $(document).ready(function() {
     }
   };
 
-  /** object for all gameplay vars/fxns related to character creation/selection */
-  var data = {
-    // data
+  /** vars/fxns related to character creation/selection */
+  var character = {
+    // the user's selections
     'userChar': null,
     'enemies': [],
     'opponent': null, 
-
-    // attributes - easily add more characters or attributes by inserting here
-    'name': ['Rachel', 'Phoebe', 'Joey', 'Chandler', 'Monica', 'Ross'],
-    'HP': [215,180,161,140, 160, 190],
-    'attackPower': [8,5,20,23,15,9],
-    'charBtnArray': [],
 
     // vars to hold current user/opponent attributes in memory during battle for faster access 
     'oppName': null,
@@ -228,40 +258,6 @@ $(document).ready(function() {
     'userAttack': null, // dynamic user attack power, increases by base each attack 
     'oppCounter': null, // opponents counter attack power(= base)
 
-    createCharBtns : function() {
-      browser.refreshGame();
-
-      for(var i = 0; i < this.name.length; i++) {
-        var charBtn = $('<button>');
-        charBtn.addClass('character-button');
-        // add attributes 
-        charBtn.attr('name', this.name[i]);
-        charBtn.attr('HP', this.HP[i]);
-        charBtn.attr('attackPower', this.attackPower[i]);
-        // add to array of buttons
-        this.charBtnArray.push(charBtn); 
-        // add display text 
-        browser.displayCharacterData(charBtn);
-        //charBtn.text(charBtn.attr('name'));
-        // append child to parent element so it displays
-        $('.your-char-div').append(charBtn);
-      }
-    },
-
-    resetCharBtns: function() {
-      // 1. remove existing 
-      for(var i = 0; i < data.charBtnArray.length; i++) {
-        var charBtn = data.charBtnArray[i];
-        charBtn.remove();
-      }
-      // 2. clear array
-      data.charBtnArray = [];
-      // 3. create 
-      data.createCharBtns();
-      // add their event listeners
-      data.selectCharacter();
-    },
-
     // player clicks one of 4 character buttons
     selectCharacter: function() {
       gameState.updateGameState("selectCharacter");
@@ -269,13 +265,13 @@ $(document).ready(function() {
       //putting this in fxn because we need to 're-call' and re-add the event listener in new game when we recreate the char buttons and assign them to the class. 
       $('.character-button').on('click', function() {
         // only set userChar once per game
-        if(data.userChar===null){
-          //store selected in data.userChar 
-          data.userChar = $(this);
+        if(character.userChar===null){
+          //store selected in character.userChar 
+          character.userChar = $(this);
           // add class user-char
-          data.userChar.addClass('user-char-btn');
+          character.userChar.addClass('user-char-btn');
           //call browser enemies
-          data.addEnemies();
+          character.addEnemies();
         } 
       });
     },
@@ -286,9 +282,9 @@ $(document).ready(function() {
       browser.refreshGame();
 
       for(var i = 0; i < data.charBtnArray.length; i++) {
-        if(!(data.charBtnArray[i].attr('name')===data.userChar.attr('name'))){
+        if(!(data.charBtnArray[i].attr('name')===character.userChar.attr('name'))){
           //add to enemies array in browser
-          data.enemies.push(data.charBtnArray[i]);
+          character.enemies.push(data.charBtnArray[i]);
           // add enemy class to charBtns for styling change
           data.charBtnArray[i].addClass('enemy-btn');
           // .enemies is new parent DIV, move to new section of page. 
@@ -303,17 +299,17 @@ $(document).ready(function() {
     selectOpponent: function() {
       $('.enemy-btn').on('click', function() {
         //pick opponent one time
-        if(data.opponent===null){ 
-          //add to data.opponent variable
-          data.opponent = $(this);
+        if(character.opponent===null){ 
+          //add to character.opponent variable
+          character.opponent = $(this);
           // remove from enemies array 
-           var index = data.enemies.indexOf($(this));
-           data.enemies.splice(index,1);
+           var index = character.enemies.indexOf($(this));
+           character.enemies.splice(index,1);
           //add opponent class for styling change
-          data.opponent.addClass('opponent-btn');
-          data.opponent.removeClass('enemy-btn');
+          character.opponent.addClass('opponent-btn');
+          character.opponent.removeClass('enemy-btn');
           //update all the character info in vars so we can access the attributes faster in the gameplay (battles)
-          data.storeAttributes();
+          character.storeAttributes();
 
           gameState.updateGameState("opponentSelected");
           browser.refreshGame();
@@ -325,65 +321,70 @@ $(document).ready(function() {
 
     storeAttributes: function() {
       //make some vars to keep things easy to access
-      this.oppName = data.opponent.attr('name');
-      this.oppHP = data.opponent.attr('HP');
-      this.oppCounter = data.opponent.attr('attackPower');
+      this.oppName = character.opponent.attr('name');
+      this.oppHP = character.opponent.attr('HP');
+      this.oppCounter = character.opponent.attr('attackPower');
       // if vars aren't starting out at null, then user has already defeated at least one opponent, so don't update the user vars. 
       if(this.userAttack===null){
         //update the uservars bc beginning of game
-        this.userHP = data.userChar.attr('HP');
-        this.userAttack = data.userChar.attr('attackPower');
-        this.userBase = data.userChar.attr('attackPower');
+        this.userHP = character.userChar.attr('HP');
+        this.userAttack = character.userChar.attr('attackPower');
+        this.userBase = character.userChar.attr('attackPower');
       }
     },
 
-    resetData: function(){
+    resetCharacters: function(){
       // reset vars
-      data.userChar = null;
-      data.enemies = [];
-      data.opponent = null;
-      data.oppName = null;
-      data.userHP = null;
-      data.oppHP = null;
-      data.userBase = null;
-      data.userAttack = null;
-      data.oppCounter = null;
+      character.userChar = null;
+      character.enemies = [];
+      character.opponent = null;
+      character.oppName = null;
+      character.userHP = null;
+      character.oppHP = null;
+      character.userBase = null;
+      character.userAttack = null;
+      character.oppCounter = null;
     }
   };
 
-  // vars and functions related to a user/opponent battle
+  // vars and functions related to user/opponent battles (user gameplay)
   var battle = {
 
     updateHP: function() {
-      // user hp decreased by whatever the opponent's counter attack power is 
-      data.userHP = data.userHP - data.oppCounter;
-      // each attack click, opponent's hp is decreased by the user's attach power 
-      data.oppHP = data.oppHP - data.userAttack;
-      //update new HP in the stored attribute on the button
-      data.userChar.attr('HP', data.userHP);
-      data.opponent.attr('HP', data.oppHP);
-      //update the HP number in the div on screen
+      character.userHP = character.userHP - character.oppCounter;
+      character.oppHP = character.oppHP - character.userAttack;
+      //update this new HP in the stored attr for each
+      character.userChar.attr('HP', character.userHP);
+      character.opponent.attr('HP', character.oppHP);
+      //update the HP displayed in the div on screen
       browser.updateHPOnScreen();
-      //see if anyone has been defeated at the new HP levels
-      battle.defeatChecker();
+      //check @ **new** HP levels **after** each attack/click
+      battle.determineOutcome();
     },
 
     updateUserAttackPower: function() {
-      // after every attack click, the user's attack power increases by their base attack power 
-      data.userAttack = parseInt(data.userAttack) + parseInt(data.userBase);
-      //auto updated in attack text next attack
+      character.userAttack = parseInt(character.userAttack) + parseInt(character.userBase);
+      //increases after attack, next attack refreshes browser display so new value is accordingly displayed 
+    },
+
+    //check if user or opponent defeated
+    determineOutcome: function() {
+      if(character.opponent.attr('HP') <= 0){
+        battle.winBattle();
+      }
+      if(character.userChar.attr('HP') <= 0){
+        battle.loseGame();
+      }
     },
 
     winBattle: function() {
       gameState.updateGameState("winBattle");
       browser.refreshGame();
-      //if enemies array empty, game over WIN! else battle, over continue 
-      if(data.enemies.length===0){
+      //game win when enemies (left) array empty 
+      if(character.enemies.length===0){
         battle.winGame();
       } else {
-        //choose new opponent
         battle.chooseNewOpponent();
-
       }
     },
 
@@ -395,36 +396,24 @@ $(document).ready(function() {
     chooseNewOpponent: function() {
       gameState.updateGameState("selectOpponent");
       browser.refreshGame();
-      data.opponent = null; //next click will choose opponent
+      character.opponent = null; //next click will choose opponent
     },
 
     loseGame: function() {
       gameState.updateGameState("loseGame");
       browser.refreshGame();
-    },
-
-    //check if user or opponent defeated
-    defeatChecker: function() {
-      // check opponent defeated 
-      if(data.opponent.attr('HP') <= 0){
-        battle.winBattle();
-      }
-      // user defeated if HP is ever 0 or below. 
-      if(data.userChar.attr('HP') <= 0){
-        battle.loseGame();
-      }
     }
   };
 
-  //browser 
-  data.createCharBtns();
-  // user interaction 
-  data.selectCharacter();
 
-  //event-management
+  // launch game, get first user input
+  browser.createCharBtns();
+  character.selectCharacter();
 
+  // event management
   $('.attack-button').on('click', function() {
-    if(!(data.opponent===null)){
+    if(!(character.opponent===null)){
+      gameState.updateGameState("inBattle");
       browser.refreshGame();
       battle.updateHP();
       battle.updateUserAttackPower();
@@ -437,15 +426,9 @@ $(document).ready(function() {
 
 });
 
-// TODO: 
-
-// any character must be able to win or lose if you pick opponents in correct order *************
-
 // housekeeping TODOs: 
 
 // remove any blank lines at end of file
 // rewrite comments to be very clear and concise. try Brian's suggestoin of a function block comment for each 
 // heroku push
 // put heroku link in readme.md on github
-// write gameplay instructions? 
-// include jokes? 
