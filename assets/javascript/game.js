@@ -2,12 +2,43 @@ $(document).ready(function() {
   // uses backstretch jquery plugin
   $('body').backstretch('assets/images/manhattan_bw.jpg');
 
+  var gameState = {
+    'selectCharacter':false,
+    'showEnemies':false,
+    'opponentSelected':false,
+    'inBattle':false,
+    'winBattle':false,
+    'loseBattle':false,
+    'loseGame':false,
+    'winGame':false,
+    'resetGame':false,
+
+    updateGameState: function(phase) {
+      for(var key in gameState) {
+        if(typeof gameState[key] === 'boolean'){
+          gameState[key] = false;
+        }
+      }
+      gameState[phase] = true;
+      console.log("update game state to " + phase);
+    },
+
+    /**
+    * This function resets everything for a new game 
+    * resets variables to null or empty
+    * removes and recreates character buttons (cleaner than removing classes, resetting attributes, etc. and leaves potential for adding new characters each level, etc. in the future)
+    * initiates new gameplay by adding event listener to char btns and waiting for user action. 
+    * called after a win or loss in the game
+    */
+    gameReset: function() {
+      browser.gameResetLayout();
+      data.resetData();
+      browser.resetCharBtns();
+    }
+  };
+
   /** object for all vars/fxns related to browser layout/display */
   var browser = {
-    'userChar': null,
-    'enemies': [],
-    'opponent': null, 
-
     /**
     * Function to show/hide an element
     * @param {string} elementClass - a class name to pass into jQuery selector 
@@ -71,8 +102,8 @@ $(document).ready(function() {
     * Function to refresh existing HP value displayed on char-btn (for user and defender during battle)
     */
     updateHPOnScreen: function() {
-      var userHP = this.userChar.attr('HP');
-      var oppHP = this.opponent.attr('HP');
+      var userHP = data.userChar.attr('HP');
+      var oppHP = data.opponent.attr('HP');
       $('.user-char-btn .char-hp').html('Hilarity: ' + userHP);
       $('.opponent-btn .char-hp').html('Hilarity: ' + oppHP);
     }, 
@@ -84,19 +115,19 @@ $(document).ready(function() {
     updateBattleText: function(textType) {
       var battleTextDiv = $('.battle-text');
       //choose relevant content based on context
-      if(textType==='attack'){
-        var sentence = ('You hit ' + character.oppName + ' with ' + character.userAttack + ' jokes and ' + character.oppName + ' countered with ' + character.oppCounter + '.');
-      } else if(textType==='loseGame') {
-        var sentence = 'Oh no, ' + character.oppName + ' got the most laughs! Click "Play Again" to start a new game.';
-      } else if(textType==='winBattle') {
-        var sentence = ('You defeated ' + character.oppName + '! Choose your next opponent by clicking a friend.');
-      } else if(textType==='beginGame') {
-        var sentence = 'Preparing for a battle of laughs. Use the "Make Jokes" button to battle ' + character.oppName + '.';
-      } else if(textType==='winGame') {
+      if(gameState.inBattle === true){
+        var sentence = ('You hit ' + data.oppName + ' with ' + data.userAttack + ' jokes and ' + data.oppName + ' countered with ' + data.oppCounter + '.');
+      } else if(gameState.loseGame === true) {
+        var sentence = 'Oh no, ' + data.oppName + ' got the most laughs! Click "Play Again" to start a new game.';
+      } else if(gameState.winBattle === true) {
+        var sentence = ('You defeated ' + data.oppName + '! Choose your next opponent by clicking a friend.');
+      } else if(gameState.beginningNewGame === true) {
+        var sentence = 'Preparing for a battle of laughs. Use the "Make Jokes" button to battle ' + data.oppName + '.';
+      } else if(gameState.winGame === true) {
         var sentence = 'Way to go champ, could you BE any funnier? Click "Play Again" to start a new game';
-      } else if(textType==='chooseCharacter') {
+      } else if(gameState.selectCharacter === true) {
         var sentence = 'Choose your character! Click on a character to select.';
-      } else if(textType==='chooseOpponent') {
+      } else if(gameState.revealEnemies === true) {
         var sentence = 'Select your first opponent! Click on a friend to challenge them.';
       }
       // update div html 
@@ -104,92 +135,84 @@ $(document).ready(function() {
     }, 
 
     /**
-    * Function to update the grid/layout for gameplay before the user picks their character
-    * hides enemies and opponent sections 
+    * Function to update the grid/layout for game state
     */
-    updateLayoutBeforeUserCharChoice: function() {
-      browser.showHidden('.enemies-section', false);
-      browser.showHidden('.opponent-section', false);
-    },
-
-    /**
-    * Function to update the grid/layout for gameplay after the user picks their character but before they pick an opponent from the enemies
-    * shows the enemies section for selection
-    * hides the opponent section 
-    * resizes the columns so user and enemies fit nicely side by side: user-section col-md-4, enemies col-md-8
-    * ensures that enemy buttons are at normal scale and not zoomed out as they are during gameplay
-    */
-    updateLayoutBeforeOpponentChoice: function() {
-      browser.showHidden('.opponent-section', false);
-      browser.showHidden('.enemies-section', true);
-      browser.columnResize('.user-section','col-md-12','col-md-4');
-      browser.columnResize('.enemies-section', 'col-md-4','col-md-8');
-      browser.isZoomedOut('.enemy-btn', false);
-    },
-
-    /**
-    * Function to update the grid/layout for gameplay after the user picks an opponent 
-    * resizes the columns so user, opponent, and enemies fit nicely side by side in that order: user-section col-md-4, opponent col-md-4, enemies col-md-4
-    * scales down the enemies buttons to 50% size using 'zoom' 
-    * ensures opponent section is now showing so opponent can be displayed for battle
-    */
-    updateLayoutAfterOpponentChoice: function() {
-      browser.columnResize('.user-section','col-md-12','col-md-4');
-      browser.columnResize('.enemies-section','col-md-8','col-md-4');
-      browser.isZoomedOut('.enemy-btn',true);
-      browser.showHidden('.opponent-section', true);
-    },
-
-    /**
-    * Function to update the grid/layout for new game
-    * called after a win or loss in the game
-    * resizes the columns so user extends col-md-12 since it now holds all char-btns for display. 
-    */
-    gameResetLayout: function() {
-      browser.columnResize('.user-section', 'col-md-4','col-md-12');
-    },
-
-    /**
-    * This function resets everything for a new game 
-    * resets variables to null or empty
-    * removes and recreates character buttons (cleaner than removing classes, resetting attributes, etc. and leaves potential for adding new characters each level, etc. in the future)
-    * initiates new gameplay by adding event listener to char btns and waiting for user action. 
-    * called after a win or loss in the game
-    */
-    gameReset: function() {
-      // reset layout
-      browser.gameResetLayout();
-      // reset vars
-      this.userChar = null;
-      this.enemies = [];
-      this.opponent = null;
-      character.oppName = null;
-      character.userHP = null;
-      character.oppHP = null;
-      character.userBase = null;
-      character.userAttack = null;
-      character.oppCounter = null;
-      // regenerate charBtns 
-      // 1. remove existing 
-      for(var i = 0; i < character.charBtnArray.length; i++) {
-        var charBtn = character.charBtnArray[i];
-        charBtn.remove();
+    updateLayout: function() {
+      /**
+      * hides enemies and opponent sections 
+      */
+      if(gameState.selectCharacter === true){
+        browser.showHidden('.enemies-section', false);
+        browser.showHidden('.opponent-section', false);
       }
-      // 2. clear array
-      character.charBtnArray = [];
-      // 3. create 
-      character.createCharBtns();
-      // add their event listeners
-      character.selectCharacter();
-      // hide the play again button
-      browser.showHidden('.new-game-button',false);
-      // change to new game text
-      browser.updateBattleText('chooseCharacter');
+      /**
+      * shows the enemies section for selection
+      * hides the opponent section 
+      * resizes the columns so user and enemies fit nicely side by side: user-section col-md-4, enemies col-md-8
+      * ensures that enemy buttons are at normal scale and not zoomed out as they are during gameplay
+      */
+      else if(gameState.revealEnemies === true){
+        browser.showHidden('.opponent-section', false);
+        browser.showHidden('.enemies-section', true);
+        browser.columnResize('.user-section','col-md-12','col-md-4');
+        browser.columnResize('.enemies-section', 'col-md-4','col-md-8');
+        browser.isZoomedOut('.enemy-btn', false);
+      }
+      /**
+      * resizes the columns so user, opponent, and enemies fit nicely side by side in that order: user-section col-md-4, opponent col-md-4, enemies col-md-4
+      * scales down the enemies buttons to 50% size using 'zoom' 
+      * ensures opponent section is now showing so opponent can be displayed for battle
+      */
+      else if(gameState.opponentSelected === true){
+        browser.columnResize('.user-section','col-md-12','col-md-4');
+        browser.columnResize('.enemies-section','col-md-8','col-md-4');
+        browser.isZoomedOut('.enemy-btn',true);
+        browser.showHidden('.opponent-section', true);
+        // zoom OPPONENT button back in *after* enemy becomes opponent
+        browser.isZoomedOut(data.opponent, false);
+        // .opponent is new parent DIV, move to new parent/section of page
+        $('.opponent-div').append(data.opponent);
+        //show attack button, get ready to fight! 
+        //attack button showing means it's on-click is active, similar to calling a 'launch attack fxn here'
+        browser.showHidden('.attack-button', true);
+      }
+      else if (gameState.winBattle === true) {
+        // remove defeated opponent button element! 
+        $('.opponent-btn').remove();
+        //hide attack button so it can't be clicked (data.selectOpponent will show attack button again)
+        browser.showHidden('.attack-button', false);
+      }
+      else if (gameState.loseGame === true) {
+        browser.showHidden('.attack-button', false);
+        browser.showHidden('.new-game-button', true);
+      }
+      else if (gameState.winGame === true) {
+        browser.showHidden('.new-game-button', true);
+      }
+      /**
+      * after a win or loss in the game, resizes the columns so user extends col-md-12 since it now holds all char-btns for display. 
+      */
+      else if(gameState.beginningNewGame === true){
+        browser.columnResize('.user-section', 'col-md-4','col-md-12');
+        browser.showHidden('.new-game-button',false);
+        // change to new game text
+        browser.updateBattleText();
+      }
+    },
+
+    refreshGame: function() {
+      browser.updateLayout();
+      browser.updateBattleText();
     }
   };
 
   /** object for all gameplay vars/fxns related to character creation/selection */
-  var character = {
+  var data = {
+    // data
+    'userChar': null,
+    'enemies': [],
+    'opponent': null, 
+
     // attributes - easily add more characters or attributes by inserting here
     'name': ['Rachel', 'Phoebe', 'Joey', 'Chandler', 'Monica', 'Ross'],
     'HP': [215,180,161,140, 160, 190],
@@ -205,7 +228,9 @@ $(document).ready(function() {
     'oppCounter': null, // opponents counter attack power(= base)
 
     createCharBtns : function() {
-      browser.updateLayoutBeforeUserCharChoice();
+      browser.refreshGame();
+      console.log("character.createCharBtns");
+
       for(var i = 0; i < this.name.length; i++) {
         var charBtn = $('<button>');
         charBtn.addClass('character-button');
@@ -223,35 +248,55 @@ $(document).ready(function() {
       }
     },
 
+    resetCharBtns: function() {
+      console.log("character.resetCharBtns");
+      // 1. remove existing 
+      for(var i = 0; i < data.charBtnArray.length; i++) {
+        var charBtn = data.charBtnArray[i];
+        charBtn.remove();
+      }
+      // 2. clear array
+      data.charBtnArray = [];
+      // 3. create 
+      data.createCharBtns();
+      // add their event listeners
+      data.selectCharacter();
+    },
+
     // player clicks one of 4 character buttons
     selectCharacter: function() {
+      console.log("character.selectCharacter");
+      gameState.updateGameState("selectCharacter");
+      browser.refreshGame();
       //putting this in fxn because we need to 're-call' and re-add the event listener in new game when we recreate the char buttons and assign them to the class. 
       $('.character-button').on('click', function() {
         // only set userChar once per game
-        if(browser.userChar===null){
-          //store selected in browser.userChar 
-          browser.userChar = $(this);
+        if(data.userChar===null){
+          //store selected in data.userChar 
+          data.userChar = $(this);
           // add class user-char
-          browser.userChar.addClass('user-char-btn');
+          data.userChar.addClass('user-char-btn');
           //call browser enemies
-          character.addEnemies();
+          data.addEnemies();
         } 
       });
     },
 
     // the others in charBtnArray stored in 'enemies'
     addEnemies: function() {
-      browser.updateLayoutBeforeOpponentChoice();
+      console.log("character.addEnemies");
+      gameState.updateGameState("revealEnemies");
+      browser.refreshGame();
 
-      for(var i = 0; i < character.charBtnArray.length; i++) {
-        if(!(character.charBtnArray[i].attr('name')===browser.userChar.attr('name'))){
+      for(var i = 0; i < data.charBtnArray.length; i++) {
+        if(!(data.charBtnArray[i].attr('name')===data.userChar.attr('name'))){
           //add to enemies array in browser
-          browser.enemies.push(character.charBtnArray[i]);
+          data.enemies.push(data.charBtnArray[i]);
           // add enemy class to charBtns for styling change
-          character.charBtnArray[i].addClass('enemy-btn');
+          data.charBtnArray[i].addClass('enemy-btn');
           // .enemies is new parent DIV, move to new section of page. 
-          $('.enemies-div').append(character.charBtnArray[i]);
-          browser.updateBattleText('chooseOpponent');
+          $('.enemies-div').append(data.charBtnArray[i]);
+          browser.updateBattleText();
         }
       }
       this.selectOpponent();
@@ -259,30 +304,24 @@ $(document).ready(function() {
 
     //player clicks an enemy and they move into the 'opponent' section
     selectOpponent: function() {
+      console.log("character.selectOpponent");
+
       $('.enemy-btn').on('click', function() {
-        browser.updateLayoutAfterOpponentChoice();
         //pick opponent one time
-        if(browser.opponent===null){
-          //add to browser.opponent variable
-          browser.opponent = $(this);
-          
+        if(data.opponent===null){ 
+          //add to data.opponent variable
+          data.opponent = $(this);
           // remove from enemies array 
-           var index = browser.enemies.indexOf($(this));
-           browser.enemies.splice(index,1);
+           var index = data.enemies.indexOf($(this));
+           data.enemies.splice(index,1);
           //add opponent class for styling change
-          browser.opponent.addClass('opponent-btn');
-          browser.opponent.removeClass('enemy-btn');
-          // zoom OPPONENT button back in *after* enemy becomes opponent
-          browser.isZoomedOut(browser.opponent, false);
-         
-          // .opponent is new parent DIV, move to new parent/section of page
-          $('.opponent-div').append(browser.opponent);
+          data.opponent.addClass('opponent-btn');
+          data.opponent.removeClass('enemy-btn');
           //update all the character info in vars so we can access the attributes faster in the gameplay (battles)
-          character.storeAttributes();
-          //show attack button, get ready to fight! 
-          //attack button showing means it's on-click is active, similar to calling a 'launch attack fxn here'
-          browser.showHidden('.attack-button', true);
-          browser.updateBattleText('beginGame');  
+          data.storeAttributes();
+
+          gameState.updateGameState("opponentSelected");
+          browser.refreshGame();
         } else {
           alert('opponent already selected!');
         }
@@ -291,16 +330,29 @@ $(document).ready(function() {
 
     storeAttributes: function() {
       //make some vars to keep things easy to access
-      this.oppName = browser.opponent.attr('name');
-      this.oppHP = browser.opponent.attr('HP');
-      this.oppCounter = browser.opponent.attr('attackPower');
+      this.oppName = data.opponent.attr('name');
+      this.oppHP = data.opponent.attr('HP');
+      this.oppCounter = data.opponent.attr('attackPower');
       // if vars aren't starting out at null, then user has already defeated at least one opponent, so don't update the user vars. 
       if(this.userAttack===null){
         //update the uservars bc beginning of game
-        this.userHP = browser.userChar.attr('HP');
-        this.userAttack = browser.userChar.attr('attackPower');
-        this.userBase = browser.userChar.attr('attackPower');
+        this.userHP = data.userChar.attr('HP');
+        this.userAttack = data.userChar.attr('attackPower');
+        this.userBase = data.userChar.attr('attackPower');
       }
+    },
+
+    resetData: function(){
+      // reset vars
+      data.userChar = null;
+      data.enemies = [];
+      data.opponent = null;
+      data.oppName = null;
+      data.userHP = null;
+      data.oppHP = null;
+      data.userBase = null;
+      data.userAttack = null;
+      data.oppCounter = null;
     }
   };
 
@@ -309,12 +361,12 @@ $(document).ready(function() {
 
     updateHP: function() {
       // user hp decreased by whatever the opponent's counter attack power is 
-      character.userHP = character.userHP - character.oppCounter;
+      data.userHP = data.userHP - data.oppCounter;
       // each attack click, opponent's hp is decreased by the user's attach power 
-      character.oppHP = character.oppHP - character.userAttack;
+      data.oppHP = data.oppHP - data.userAttack;
       //update new HP in the stored attribute on the button
-      browser.userChar.attr('HP', character.userHP);
-      browser.opponent.attr('HP', character.oppHP);
+      data.userChar.attr('HP', data.userHP);
+      data.opponent.attr('HP', data.oppHP);
       //update the HP number in the div on screen
       browser.updateHPOnScreen();
       //see if anyone has been defeated at the new HP levels
@@ -323,60 +375,70 @@ $(document).ready(function() {
 
     updateUserAttackPower: function() {
       // after every attack click, the user's attack power increases by their base attack power 
-      character.userAttack = parseInt(character.userAttack) + parseInt(character.userBase);
+      data.userAttack = parseInt(data.userAttack) + parseInt(data.userBase);
       //auto updated in attack text next attack
+    },
+
+    winBattle: function() {
+        browser.refreshGame();
+        //if enemies array empty, game over WIN! else battle, over continue 
+        if(data.enemies.length===0){
+          battle.winGame();
+        } else {
+          //choose new opponent
+          gameState.selectOpponent = true;
+          data.chooseNewOpponent();
+
+        }
+    },
+
+    winGame: function() {
+      gameState.updateGameState("winGame");
+      browser.refreshGame();
+    },
+
+    chooseNewOpponent: function() {
+      gameState.selectOpponent = true;
+      browser.refreshGame();
+      data.opponent = null; //next click will choose opponent
+    },
+
+    loseGame: function() {
+      gameState.loseGame = true;
+      browser.refreshGame();
     },
 
     //check if user or opponent defeated
     defeatChecker: function() {
       // check opponent defeated 
-      if(browser.opponent.attr('HP') <= 0){
-        // remove defeated opponent button element! 
-        $('.opponent-btn').remove();
-        //hide attack button so it can't be clicked (character.selectOpponent will show attack button again)
-        browser.showHidden('.attack-button', false);
-
-        //if enemies array empty, game over WIN! else battle, over continue 
-        if(browser.enemies.length===0){
-          browser.updateBattleText('winGame');
-          browser.showHidden('.new-game-button', true);
-        } else {
-          // show success text (choose a new opponent)
-          browser.updateBattleText('winBattle');
-          // set browser.opponent = null so character.selectOpponent() triggers selection of a new one (using .enemy onclick) 
-          browser.updateLayoutBeforeOpponentChoice();
-          browser.opponent = null;
-        }
+      if(data.opponent.attr('HP') <= 0){
+        gameState.winBattle = true;
+        battle.winBattle();
       }
       // user defeated if HP is ever 0 or below. 
-      if(browser.userChar.attr('HP') <= 0){
-        // show defeat text
-        browser.updateBattleText('loseGame');
-        //hide attack button 
-        browser.showHidden('.attack-button', false);
-        // show 'try again' button which calls some function
-        browser.showHidden('.new-game-button', true);
+      if(data.userChar.attr('HP') <= 0){
+        battle.loseGame();
       }
     }
   };
 
   //browser 
-  character.createCharBtns();
+  data.createCharBtns();
   // user interaction 
-  character.selectCharacter();
+  data.selectCharacter();
 
   //event-management
 
   $('.attack-button').on('click', function() {
-    if(!(browser.opponent===null)){
-      browser.updateBattleText('attack');
+    if(!(data.opponent===null)){
+      browser.refreshGame();
       battle.updateHP();
       battle.updateUserAttackPower();
     }
   });
 
   $('.new-game-button').on('click', function() {
-    browser.gameReset();
+    gameState.gameReset();
   });
 
 });
