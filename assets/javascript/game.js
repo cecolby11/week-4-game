@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   var gameState = {
     'selectCharacter':false,
-    'showEnemies':false,
+    'revealEnemiesHideOpponent':false,
     'opponentSelected':false,
     'winBattle':false,
     'loseBattle':false,
@@ -36,7 +36,7 @@ $(document).ready(function() {
     * called after a win or loss in the game
     */
     gameReset: function() {
-      gameState.updateGameState("resetToNewGame");
+      gameState.updateGameState('resetToNewGame');
       browser.refreshGame();
 
       character.resetCharacters();
@@ -46,10 +46,22 @@ $(document).ready(function() {
 
   var data = {
     // attributes - easily add more characters or attributes by inserting here
-    'name': ['Rachel', 'Phoebe', 'Joey', 'Chandler', 'Monica', 'Ross'],
-    'HP': [215,180,161,140, 160, 190],
+    'name': ['Chandler', 'Phoebe', 'Joey', 'Monica', 'Rachel', 'Ross'],
+    'HP': [215,180,161,140,160,190],
     'attackPower': [8,5,20,23,15,9],
-    'charBtnArray': []
+    'charBtnArray': [],
+    'jokes': [
+      "I like it. What's not to like? Custard? Good. Jam? Good. Meat? Good.",
+      "This is all a moo point. ... Yeah, it's like a cow's opinion. It just doesn't matter. It's moo.",
+      "Look at me! I'm Chandler! Could I BE wearing any more clothes?!",
+      "Okay, Ducks is heads, because ducks have heads.",
+      "I’m not great at the advice. Can I interest you in a sarcastic comment?",
+      "I’m Chandler. I make jokes when I’m uncomfortable.",
+      "Come on Ross, you're a paleontologist. Dig a little deeper",
+      "You don't own a TV? What's all your furniture pointed at?",
+      "You hung up on the pizza place? I don't hang up on <em>your</em> friends",
+      "You can't just give up! Is that what a dinosaur would do?"
+    ]
   };
 
   /** object for all vars/fxns related to browser layout/display */
@@ -166,7 +178,9 @@ $(document).ready(function() {
       var battleTextDiv = $('.battle-text');
       //choose relevant content based on context
       if(gameState.inBattle === true){
-        var sentence = ('You hit ' + character.oppName + ' with ' + character.userAttack + ' jokes and ' + character.oppName + ' countered with ' + character.oppCounter + '.');
+        var joke = data.jokes[Math.floor(Math.random() * data.jokes.length)];
+        var sentence = ('You hit ' + character.oppName + ' with ' + character.userAttack + ' jokes and ' + character.oppName + ' countered with ' + character.oppCounter + '.' + '<br><span class="joke-text">' + joke + '</span>')
+        ;
       } else if(gameState.loseGame === true) {
         var sentence = 'Oh no, ' + character.oppName + ' got the most laughs! Click "Play Again" to start a new game.';
       } else if(gameState.winBattle === true) {
@@ -177,8 +191,8 @@ $(document).ready(function() {
         var sentence = 'Way to go champ, could you BE any funnier? Click "Play Again" to start a new game';
       } else if(gameState.selectCharacter === true) {
         var sentence = 'Choose your character! Click on a character to select.';
-      } else if(gameState.revealEnemies === true) {
-        var sentence = 'Select your first opponent! Click on a friend to challenge them.';
+      } else if(gameState.revealEnemiesHideOpponent === true) {
+        var sentence = 'Select your first opponent! Click on a friend to challenge them.<br><span class="instruction"> Choose wisely to <em>keep your hilarity points above 0 throughout the battles!</class>';
       }
       // update div html 
       battleTextDiv.html(sentence);
@@ -198,7 +212,7 @@ $(document).ready(function() {
       * resizes the columns so user and enemies fit nicely side by side: user-section col-md-4, enemies col-md-8
       * ensures that enemy buttons are at normal scale and not zoomed out as they are during gameplay
       */
-      else if(gameState.revealEnemies === true){
+      else if(gameState.revealEnemiesHideOpponent === true){
         browser.showHidden('.opponent-section', false);
         browser.showHidden('.enemies-section', true);
         browser.columnResize('.user-section','col-md-12','col-md-4');
@@ -226,6 +240,10 @@ $(document).ready(function() {
         // remove defeated opponent 
         $('.opponent-btn').remove();
         browser.showHidden('.attack-button', false);
+        browser.showHidden('.opponent-section', false);
+        browser.showHidden('.enemies-section', true);
+        browser.columnResize('.enemies-section', 'col-md-4','col-md-8');
+        browser.isZoomedOut('.enemy-btn', false);
       }
       else if (gameState.loseGame === true) {
         browser.showHidden('.attack-button', false);
@@ -266,7 +284,7 @@ $(document).ready(function() {
 
     // player clicks one of 4 character buttons
     selectCharacter: function() {
-      gameState.updateGameState("selectCharacter");
+      gameState.updateGameState('selectCharacter');
       browser.refreshGame();
       //putting this in fxn because we need to 're-call' and re-add the event listener in new game when we recreate the char buttons and assign them to the class. 
       $('.character-button').on('click', function() {
@@ -284,7 +302,7 @@ $(document).ready(function() {
 
     // the others in charBtnArray stored in 'enemies'
     addEnemies: function() {
-      gameState.updateGameState("revealEnemies");
+      gameState.updateGameState('revealEnemiesHideOpponent');
       browser.refreshGame();
 
       for(var i = 0; i < data.charBtnArray.length; i++) {
@@ -295,7 +313,7 @@ $(document).ready(function() {
           data.charBtnArray[i].addClass('enemy-btn');
           // .enemies is new parent DIV, move to new section of page. 
           $('.enemies-div').append(data.charBtnArray[i]);
-          browser.updateBattleText();
+          //browser.updateBattleText();
         }
       }
       this.selectOpponent();
@@ -317,7 +335,7 @@ $(document).ready(function() {
           //update all the character info in vars so we can access the attributes faster in the gameplay (battles)
           character.storeAttributes();
 
-          gameState.updateGameState("opponentSelected");
+          gameState.updateGameState('opponentSelected');
           browser.refreshGame();
         } else {
           alert('opponent already selected!');
@@ -384,7 +402,7 @@ $(document).ready(function() {
     },
 
     winBattle: function() {
-      gameState.updateGameState("winBattle");
+      gameState.updateGameState('winBattle');
       browser.refreshGame();
       //game win when enemies (left) array empty 
       if(character.enemies.length===0){
@@ -395,18 +413,16 @@ $(document).ready(function() {
     },
 
     winGame: function() {
-      gameState.updateGameState("winGame");
+      gameState.updateGameState('winGame');
       browser.refreshGame();
     },
 
     chooseNewOpponent: function() {
-      gameState.updateGameState("selectOpponent");
-      browser.refreshGame();
       character.opponent = null; //next click will choose opponent
     },
 
     loseGame: function() {
-      gameState.updateGameState("loseGame");
+      gameState.updateGameState('loseGame');
       browser.refreshGame();
     }
   };
@@ -414,9 +430,9 @@ $(document).ready(function() {
   // event management
   $('.attack-button').on('click', function() {
     if(!(character.opponent===null)){
-      gameState.updateGameState("inBattle");
+      gameState.updateGameState('inBattle');
       browser.refreshGame();
-      battle.updateHP();
+      battle.updateHP(); // calls determineOutcome()
       battle.updateUserAttackPower();
     }
   });

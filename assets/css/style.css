@@ -54,11 +54,20 @@ h3{
   font-size: 20px;
   letter-spacing: 1px;
 }
+.jumbotron p .instruction {
+  color: var(--brightest-color);
+  font-size: 14px;
+}
 .thumbnail {
   margin: 0 auto;
   border: none;
   padding: 0;
   border-radius: 0px;
+}
+.joke-text{
+  color: #809837;
+  font-size: 14px;
+  font-style: italic;
 }
 
 /*characters - all*/
