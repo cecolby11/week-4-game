@@ -11,7 +11,7 @@ $(document).ready(function() {
     'loseBattle':false,
     'loseGame':false,
     'winGame':false,
-    'resetGame':false,
+    'resetToNewGame':false,
 
     updateGameState: function(phase) {
       for(var key in gameState) {
@@ -31,9 +31,10 @@ $(document).ready(function() {
     * called after a win or loss in the game
     */
     gameReset: function() {
-      browser.gameResetLayout();
+      gameState.updateGameState("resetToNewGame");
+      browser.refreshGame();
       data.resetData();
-      browser.resetCharBtns();
+      data.resetCharBtns();
     }
   };
 
@@ -121,7 +122,7 @@ $(document).ready(function() {
         var sentence = 'Oh no, ' + data.oppName + ' got the most laughs! Click "Play Again" to start a new game.';
       } else if(gameState.winBattle === true) {
         var sentence = ('You defeated ' + data.oppName + '! Choose your next opponent by clicking a friend.');
-      } else if(gameState.beginningNewGame === true) {
+      } else if(gameState.resetToNewGame === true) {
         var sentence = 'Preparing for a battle of laughs. Use the "Make Jokes" button to battle ' + data.oppName + '.';
       } else if(gameState.winGame === true) {
         var sentence = 'Way to go champ, could you BE any funnier? Click "Play Again" to start a new game';
@@ -192,7 +193,7 @@ $(document).ready(function() {
       /**
       * after a win or loss in the game, resizes the columns so user extends col-md-12 since it now holds all char-btns for display. 
       */
-      else if(gameState.beginningNewGame === true){
+      else if(gameState.resetToNewGame === true){
         browser.columnResize('.user-section', 'col-md-4','col-md-12');
         browser.showHidden('.new-game-button',false);
         // change to new game text
@@ -229,7 +230,6 @@ $(document).ready(function() {
 
     createCharBtns : function() {
       browser.refreshGame();
-      console.log("character.createCharBtns");
 
       for(var i = 0; i < this.name.length; i++) {
         var charBtn = $('<button>');
@@ -249,7 +249,6 @@ $(document).ready(function() {
     },
 
     resetCharBtns: function() {
-      console.log("character.resetCharBtns");
       // 1. remove existing 
       for(var i = 0; i < data.charBtnArray.length; i++) {
         var charBtn = data.charBtnArray[i];
@@ -265,7 +264,6 @@ $(document).ready(function() {
 
     // player clicks one of 4 character buttons
     selectCharacter: function() {
-      console.log("character.selectCharacter");
       gameState.updateGameState("selectCharacter");
       browser.refreshGame();
       //putting this in fxn because we need to 're-call' and re-add the event listener in new game when we recreate the char buttons and assign them to the class. 
@@ -284,7 +282,6 @@ $(document).ready(function() {
 
     // the others in charBtnArray stored in 'enemies'
     addEnemies: function() {
-      console.log("character.addEnemies");
       gameState.updateGameState("revealEnemies");
       browser.refreshGame();
 
@@ -304,8 +301,6 @@ $(document).ready(function() {
 
     //player clicks an enemy and they move into the 'opponent' section
     selectOpponent: function() {
-      console.log("character.selectOpponent");
-
       $('.enemy-btn').on('click', function() {
         //pick opponent one time
         if(data.opponent===null){ 
@@ -380,16 +375,16 @@ $(document).ready(function() {
     },
 
     winBattle: function() {
-        browser.refreshGame();
-        //if enemies array empty, game over WIN! else battle, over continue 
-        if(data.enemies.length===0){
-          battle.winGame();
-        } else {
-          //choose new opponent
-          gameState.selectOpponent = true;
-          data.chooseNewOpponent();
+      gameState.updateGameState("winBattle");
+      browser.refreshGame();
+      //if enemies array empty, game over WIN! else battle, over continue 
+      if(data.enemies.length===0){
+        battle.winGame();
+      } else {
+        //choose new opponent
+        battle.chooseNewOpponent();
 
-        }
+      }
     },
 
     winGame: function() {
@@ -398,13 +393,13 @@ $(document).ready(function() {
     },
 
     chooseNewOpponent: function() {
-      gameState.selectOpponent = true;
+      gameState.updateGameState("selectOpponent");
       browser.refreshGame();
       data.opponent = null; //next click will choose opponent
     },
 
     loseGame: function() {
-      gameState.loseGame = true;
+      gameState.updateGameState("loseGame");
       browser.refreshGame();
     },
 
@@ -412,7 +407,6 @@ $(document).ready(function() {
     defeatChecker: function() {
       // check opponent defeated 
       if(data.opponent.attr('HP') <= 0){
-        gameState.winBattle = true;
         battle.winBattle();
       }
       // user defeated if HP is ever 0 or below. 
